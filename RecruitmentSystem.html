@@ -1,0 +1,2424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TalentBridge – Recruitment System</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0d14;
+    --surface: #111520;
+    --surface2: #161b2e;
+    --border: #1e2540;
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --accent3: #00d4aa;
+    --danger: #f7566a;
+    --warn: #f7a84f;
+    --text: #e8ecf5;
+    --muted: #6b7a9e;
+    --card: #131825;
+    --radius: 14px;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+  #root { min-height: 100vh; }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .justify-center { justify-content: center; }
+  .gap-1 { gap: 8px; }
+  .gap-2 { gap: 16px; }
+  .gap-3 { gap: 24px; }
+  .gap-4 { gap: 32px; }
+  .w-full { width: 100%; }
+  .mt-1 { margin-top: 8px; }
+  .mt-2 { margin-top: 16px; }
+  .mt-3 { margin-top: 24px; }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 11px; }
+  .text-muted { color: var(--muted); }
+  .bold { font-weight: 700; }
+  .hidden { display: none; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: .4px;
+  }
+  .badge-blue { background: #1a2d5a; color: var(--accent); }
+  .badge-green { background: #0d2e28; color: var(--accent3); }
+  .badge-purple { background: #21183a; color: #b39dff; }
+  .badge-red { background: #2e1118; color: var(--danger); }
+  .badge-warn { background: #2e2212; color: var(--warn); }
+  .badge-gray { background: var(--surface2); color: var(--muted); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 9px 20px; border-radius: 9px; font-family: var(--font-body);
+    font-size: 14px; font-weight: 500; cursor: pointer; border: none;
+    transition: all .18s ease; text-decoration: none; white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #3a7aef; transform: translateY(-1px); box-shadow: 0 6px 20px #4f8ef740; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: #e04055; }
+  .btn-success { background: var(--accent3); color: #0a0d14; }
+  .btn-success:hover { background: #00bfa3; }
+  .btn-purple { background: var(--accent2); color: #fff; }
+  .btn-purple:hover { background: #6a4de0; }
+  .btn-ghost { background: transparent; color: var(--muted); }
+  .btn-ghost:hover { color: var(--text); background: var(--surface2); }
+  .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 7px; }
+  .btn-lg { padding: 13px 32px; font-size: 16px; border-radius: 11px; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--accent); color: var(--accent); }
+  .btn-outline:hover { background: var(--accent); color: #fff; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-label { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: .3px; }
+  .form-input {
+    background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: 9px; padding: 10px 14px; color: var(--text);
+    font-family: var(--font-body); font-size: 14px; outline: none;
+    transition: border-color .15s; width: 100%;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  .form-select {
+    background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: 9px; padding: 10px 14px; color: var(--text);
+    font-family: var(--font-body); font-size: 14px; outline: none;
+    cursor: pointer; -webkit-appearance: none; width: 100%;
+  }
+  .form-select:focus { border-color: var(--accent); }
+  .form-textarea {
+    background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: 9px; padding: 10px 14px; color: var(--text);
+    font-family: var(--font-body); font-size: 14px; outline: none;
+    resize: vertical; min-height: 90px; transition: border-color .15s; width: 100%;
+  }
+  .form-textarea:focus { border-color: var(--accent); }
+  .error-msg { color: var(--danger); font-size: 12px; margin-top: 2px; }
+  .success-msg { color: var(--accent3); font-size: 12px; margin-top: 2px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    transition: border-color .15s;
+  }
+  .card-sm { padding: 16px; }
+  .card:hover { border-color: #2a3460; }
+
+  #toast-container {
+    position: fixed; top: 20px; right: 20px; z-index: 9999;
+    display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+  }
+  .toast {
+    padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 500;
+    min-width: 250px; animation: slideIn .25s ease; pointer-events: all;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 32px #00000060;
+  }
+  .toast-success { background: #0d2e28; border: 1px solid var(--accent3); color: var(--accent3); }
+  .toast-error { background: #2e1118; border: 1px solid var(--danger); color: var(--danger); }
+  .toast-info { background: #1a2d5a; border: 1px solid var(--accent); color: var(--accent); }
+  @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  .modal-overlay {
+    position: fixed; inset: 0; background: #000000b0;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px; backdrop-filter: blur(4px);
+    animation: fadeIn .2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 32px; width: 100%; max-width: 520px;
+    max-height: 90vh; overflow-y: auto;
+    animation: scaleIn .2s ease;
+  }
+  .modal-wide { max-width: 800px; }
+  @keyframes scaleIn { from { transform: scale(.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .modal-title { font-family: var(--font-head); font-size: 20px; font-weight: 700; }
+
+  .auth-page {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    background: radial-gradient(ellipse at 20% 50%, #1a2d5a30 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, #21183a40 0%, transparent 60%), var(--bg);
+  }
+  .auth-glow {
+    position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, #4f8ef712, transparent 70%);
+    pointer-events: none;
+  }
+  .auth-container { position: relative; z-index: 1; width: 100%; max-width: 440px; padding: 20px; }
+  .auth-logo { text-align: center; margin-bottom: 32px; }
+  .auth-logo-icon {
+    width: 56px; height: 56px; background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 16px; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 26px; margin-bottom: 12px;
+  }
+  .auth-logo h1 {
+    font-family: var(--font-head); font-size: 28px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .auth-logo p { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .auth-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px;
+    box-shadow: 0 24px 80px #00000060;
+  }
+  .auth-tabs { display: flex; gap: 0; margin-bottom: 24px; background: var(--bg); border-radius: 10px; padding: 4px; }
+  .auth-tab {
+    flex: 1; padding: 8px; text-align: center; border-radius: 7px;
+    font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted);
+    transition: all .18s;
+  }
+  .auth-tab.active { background: var(--accent); color: #fff; }
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .role-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .role-option {
+    padding: 12px; border-radius: 10px; border: 1.5px solid var(--border);
+    cursor: pointer; text-align: center; transition: all .15s;
+  }
+  .role-option.selected { border-color: var(--accent); background: #1a2d5a; }
+  .role-option-icon { font-size: 22px; margin-bottom: 5px; }
+  .role-option-label { font-size: 12px; font-weight: 600; color: var(--text); }
+  .role-option-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .navbar {
+    position: sticky; top: 0; z-index: 100;
+    background: #0a0d14e0; border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 62px;
+  }
+  .nav-logo {
+    font-family: var(--font-head); font-size: 20px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+  }
+  .nav-logo-dot { width: 8px; height: 8px; background: var(--accent3); border-radius: 50%; flex-shrink: 0; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+    color: #fff;
+  }
+
+  .layout { display: flex; min-height: calc(100vh - 62px); }
+  .sidebar {
+    width: 240px; flex-shrink: 0; background: var(--surface);
+    border-right: 1px solid var(--border); padding: 20px 12px;
+    display: flex; flex-direction: column; gap: 4px;
+    position: sticky; top: 62px; height: calc(100vh - 62px); overflow-y: auto;
+  }
+  .sidebar-section { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; color: var(--muted); padding: 12px 12px 6px; text-transform: uppercase; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 9px; cursor: pointer;
+    font-size: 13px; font-weight: 500; color: var(--muted); transition: all .15s;
+  }
+  .sidebar-item:hover { color: var(--text); background: var(--surface2); }
+  .sidebar-item.active { color: var(--accent); background: #1a2d5a; }
+  .sidebar-item-icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-badge {
+    margin-left: auto; background: var(--accent); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px;
+  }
+  .content { flex: 1; padding: 32px; overflow-y: auto; max-width: calc(100vw - 240px); }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 20px;
+    transition: transform .15s, border-color .15s;
+  }
+  .stat-card:hover { transform: translateY(-2px); border-color: #2a3460; }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+  .stat-value { font-family: var(--font-head); font-size: 32px; font-weight: 800; }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .stat-icon { font-size: 22px; margin-bottom: 10px; }
+
+  .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: var(--surface2); padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .7px; color: var(--muted); text-transform: uppercase; }
+  td { padding: 13px 16px; font-size: 13px; border-top: 1px solid var(--border); }
+  tr:hover td { background: var(--surface2); }
+
+  .search-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 9px 14px; flex: 1;
+  }
+  .search-bar:focus-within { border-color: var(--accent); }
+  .search-bar input { background: none; border: none; outline: none; color: var(--text); font-family: var(--font-body); font-size: 14px; flex: 1; }
+  .search-bar input::placeholder { color: var(--muted); }
+
+  .job-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 22px; transition: all .18s; cursor: pointer;
+  }
+  .job-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 30px #4f8ef718; }
+  .job-card-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .job-card-company { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .job-card-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .job-card-footer { display: flex; justify-content: space-between; align-items: center; }
+
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .page-title { font-family: var(--font-head); font-size: 26px; font-weight: 800; }
+  .page-subtitle { color: var(--muted); font-size: 14px; margin-top: 4px; }
+
+  .upload-zone {
+    border: 2px dashed var(--border); border-radius: 12px; padding: 28px;
+    text-align: center; cursor: pointer; transition: all .2s;
+    background: var(--surface2);
+  }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: #1a2d5a20; }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .tab { padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; transition: all .15s; margin-bottom: -1px; }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .progress-bar { background: var(--border); border-radius: 4px; height: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .4s; }
+
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .timeline-item { position: relative; padding-bottom: 24px; }
+  .timeline-dot { position: absolute; left: -24px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .timeline-dot.done { background: var(--accent3); }
+  .timeline-dot.pending { background: var(--warn); }
+
+  .notif-item {
+    padding: 14px; border-radius: 10px; border: 1px solid var(--border);
+    margin-bottom: 10px; transition: background .15s; cursor: pointer;
+  }
+  .notif-item:hover { background: var(--surface2); }
+  .notif-item.unread { border-left: 3px solid var(--accent); }
+
+  .score-wrap { display: flex; align-items: center; gap: 10px; }
+  .score-bar { flex: 1; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-title { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+
+  .interview-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+
+  .hero {
+    padding: 80px 32px 60px;
+    background: radial-gradient(ellipse at 50% 0%, #1a2d5a40, transparent 60%), var(--bg);
+    text-align: center;
+  }
+  .hero h1 { font-family: var(--font-head); font-size: clamp(36px, 6vw, 68px); font-weight: 800; line-height: 1.1; margin-bottom: 18px; }
+  .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { font-size: clamp(15px, 2vw, 18px); color: var(--muted); max-width: 560px; margin: 0 auto 36px; line-height: 1.7; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 0 32px 60px; }
+  .feature-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 24px; transition: border-color .2s;
+  }
+  .feature-card:hover { border-color: var(--accent); }
+  .feature-icon { font-size: 32px; margin-bottom: 14px; }
+  .feature-title { font-family: var(--font-head); font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .feature-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .pipeline-stage {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 9px; background: var(--surface2);
+    border: 1px solid var(--border); margin-bottom: 8px;
+    cursor: pointer; transition: border-color .15s;
+  }
+  .pipeline-stage:hover { border-color: var(--accent); }
+  .pipeline-count { font-family: var(--font-head); font-size: 22px; font-weight: 800; min-width: 40px; }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .content { max-width: 100vw; padding: 20px; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .navbar { padding: 0 16px; }
+    .auth-card { padding: 22px; }
+    .content { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="toast-container"></div>
+
+<script>
+
+// ══════════════════════════════════════════════
+//  INITIAL DATA
+// ══════════════════════════════════════════════
+const DEFAULT_USERS = [
+  { id: 1, name: "Admin Root", email: "admin@talentbridge.com", password: "admin123", role: "admin", active: true, createdAt: "2024-01-01", phone: "9000000001", skills: "", experience: "", resume: null, resumeFilename: "" },
+  { id: 2, name: "Sarah HR", email: "recruiter@talentbridge.com", password: "recruiter123", role: "recruiter", active: true, createdAt: "2024-01-02", phone: "9000000002", skills: "", experience: "", resume: null, resumeFilename: "" },
+  //{ id: 3, name: "Alex Candidate", email: "candidate@talentbridge.com", password: "candidate123", role: "candidate", active: true, createdAt: "2024-01-03", phone: "9000000003", skills: "React, Node.js, JavaScript", experience: "2 years", resume: null, resumeFilename: "" }
+];
+
+const DEFAULT_JOBS = [
+  { id: 'job_default_01', title: 'Frontend Developer', department: 'Engineering', location: 'Remote', type: 'Full-time', salary: '₹8-14 LPA', experience: '2+ years', skills: ['React', 'JavaScript', 'HTML', 'CSS', 'TypeScript'], description: 'Build and maintain modern, responsive web interfaces for our SaaS platform. You will work closely with designers and backend engineers to deliver great user experiences.', requirements: 'Strong knowledge of React and modern JS. Experience with REST APIs and version control (Git). Good eye for UI/UX.', status: 'Active', postedBy: 2, postedAt: '2025-03-01', deadline: '2025-06-30', company: 'TalentBridge' },
+  { id: 'job_default_02', title: 'Backend Developer', department: 'Engineering', location: 'Bangalore', type: 'Full-time', salary: '₹10-18 LPA', experience: '3+ years', skills: ['Node.js', 'Python', 'PostgreSQL', 'REST API', 'Docker'], description: 'Design and build scalable backend services and APIs. Collaborate with the frontend team to integrate features end-to-end.', requirements: 'Proficiency in Node.js or Python. Strong understanding of databases (SQL/NoSQL). Experience with cloud services (AWS/GCP).', status: 'Active', postedBy: 2, postedAt: '2025-03-05', deadline: '2025-07-15', company: 'TalentBridge' },
+  { id: 'job_default_03', title: 'Full Stack Developer', department: 'Engineering', location: 'Chennai', type: 'Full-time', salary: '₹12-20 LPA', experience: '4+ years', skills: ['React', 'Node.js', 'MongoDB', 'JavaScript', 'Docker'], description: 'Own features from database to UI. You will design APIs, build React frontends, and ensure code quality across the stack.', requirements: 'Experience with MERN stack. Knowledge of CI/CD pipelines. Ability to work independently on full features.', status: 'Active', postedBy: 2, postedAt: '2025-03-08', deadline: '2025-07-01', company: 'InnoSoft' },
+  { id: 'job_default_04', title: 'Data Analyst', department: 'Analytics', location: 'Hyderabad', type: 'Full-time', salary: '₹7-12 LPA', experience: '2+ years', skills: ['Python', 'SQL', 'Excel', 'Power BI', 'Statistics'], description: 'Analyze business data to uncover trends and provide actionable insights. Build dashboards and reports for stakeholders.', requirements: 'Proficient in SQL and Python (Pandas, NumPy). Experience with BI tools like Power BI or Tableau. Good communication skills.', status: 'Active', postedBy: 2, postedAt: '2025-03-10', deadline: '2025-06-20', company: 'DataTech Solutions' },
+  { id: 'job_default_05', title: 'Machine Learning Engineer', department: 'AI/ML', location: 'Remote', type: 'Full-time', salary: '₹18-30 LPA', experience: '3+ years', skills: ['Python', 'TensorFlow', 'PyTorch', 'Machine Learning', 'Deep Learning'], description: 'Develop and deploy ML models for product recommendation, fraud detection, and NLP use cases. Optimize model performance in production.', requirements: 'Strong ML fundamentals. Experience with TensorFlow or PyTorch. Familiarity with MLOps tools.', status: 'Active', postedBy: 2, postedAt: '2025-03-12', deadline: '2025-07-31', company: 'AIWorks' },
+  { id: 'job_default_06', title: 'DevOps Engineer', department: 'Infrastructure', location: 'Pune', type: 'Full-time', salary: '₹14-22 LPA', experience: '3+ years', skills: ['Docker', 'Kubernetes', 'AWS', 'CI/CD', 'Linux'], description: 'Manage cloud infrastructure, automate deployments, and maintain system reliability. Work closely with engineering teams to improve developer experience.', requirements: 'Hands-on with AWS or GCP. Experience with Kubernetes and Docker. Knowledge of monitoring tools (Prometheus, Grafana).', status: 'Active', postedBy: 2, postedAt: '2025-03-15', deadline: '2025-07-10', company: 'CloudPeak' },
+  { id: 'job_default_07', title: 'UI/UX Designer', department: 'Design', location: 'Mumbai', type: 'Full-time', salary: '₹8-14 LPA', experience: '2+ years', skills: ['Figma', 'Adobe XD', 'Prototyping', 'User Research', 'CSS'], description: 'Design intuitive interfaces and user journeys for web and mobile products. Conduct user research and usability testing.', requirements: 'Portfolio showcasing end-to-end product design. Proficiency in Figma. Understanding of accessibility standards.', status: 'Active', postedBy: 2, postedAt: '2025-03-18', deadline: '2025-06-30', company: 'DesignLab' },
+  { id: 'job_default_08', title: 'QA Engineer', department: 'Quality', location: 'Noida', type: 'Full-time', salary: '₹6-11 LPA', experience: '2+ years', skills: ['Selenium', 'Python', 'Manual Testing', 'API Testing', 'JIRA'], description: 'Ensure product quality through manual and automated testing. Write test plans, report bugs, and work with developers to ship reliable software.', requirements: 'Experience with Selenium or Cypress. Familiarity with Agile/Scrum. Good understanding of SDLC and STLC.', status: 'Active', postedBy: 2, postedAt: '2025-03-20', deadline: '2025-06-25', company: 'QualityFirst' },
+  { id: 'job_default_09', title: 'Mobile App Developer (Android)', department: 'Mobile', location: 'Bangalore', type: 'Full-time', salary: '₹10-16 LPA', experience: '3+ years', skills: ['Android', 'Kotlin', 'Java', 'REST API', 'Firebase'], description: 'Build and maintain our Android application. Integrate backend APIs, improve performance, and deliver new features.', requirements: 'Strong Kotlin/Java skills. Experience publishing apps on Play Store. Familiarity with Firebase and push notifications.', status: 'Active', postedBy: 2, postedAt: '2025-03-22', deadline: '2025-07-20', company: 'MobileFirst' },
+  { id: 'job_default_10', title: 'React Native Developer', department: 'Mobile', location: 'Remote', type: 'Full-time', salary: '₹12-18 LPA', experience: '3+ years', skills: ['React Native', 'JavaScript', 'TypeScript', 'Redux', 'REST API'], description: 'Develop cross-platform mobile apps using React Native. Collaborate with design and backend teams to ship polished mobile experiences.', requirements: 'Production experience with React Native. Familiarity with App Store and Play Store publishing. Experience with state management (Redux/MobX).', status: 'Active', postedBy: 2, postedAt: '2025-03-25', deadline: '2025-08-01', company: 'AppNation' },
+  { id: 'job_default_11', title: 'Cybersecurity Analyst', department: 'Security', location: 'Delhi', type: 'Full-time', salary: '₹12-20 LPA', experience: '3+ years', skills: ['Network Security', 'Penetration Testing', 'Linux', 'Python', 'SIEM'], description: 'Monitor, detect, and respond to security threats. Conduct vulnerability assessments and ensure compliance with security policies.', requirements: 'Experience with SIEM tools. Knowledge of OWASP, CVEs. Relevant certifications (CEH, CISSP) preferred.', status: 'Active', postedBy: 2, postedAt: '2025-03-28', deadline: '2025-07-15', company: 'SecureNet' },
+  { id: 'job_default_12', title: 'Business Analyst', department: 'Product', location: 'Hyderabad', type: 'Full-time', salary: '₹9-15 LPA', experience: '3+ years', skills: ['Business Analysis', 'SQL', 'Excel', 'Agile', 'Documentation'], description: 'Bridge the gap between business stakeholders and the tech team. Gather requirements, write user stories, and ensure solutions deliver value.', requirements: 'Strong analytical and communication skills. Experience writing BRDs and user stories. Familiarity with Agile methodology.', status: 'Active', postedBy: 2, postedAt: '2025-04-01', deadline: '2025-07-05', company: 'BizLogic' },
+  { id: 'job_default_13', title: 'Cloud Architect', department: 'Infrastructure', location: 'Remote', type: 'Full-time', salary: '₹25-40 LPA', experience: '7+ years', skills: ['AWS', 'Azure', 'Terraform', 'Kubernetes', 'Microservices'], description: 'Design and oversee cloud architecture for enterprise clients. Define infrastructure standards and guide engineering teams on best practices.', requirements: 'Deep expertise in AWS or Azure. Experience with Terraform/Pulumi. Strong understanding of microservices and distributed systems.', status: 'Active', postedBy: 2, postedAt: '2025-04-03', deadline: '2025-08-15', company: 'CloudPeak' },
+  { id: 'job_default_14', title: 'HR Intern', department: 'Human Resources', location: 'Chennai', type: 'Internship', salary: '₹15,000/month', experience: 'Fresher', skills: ['Communication', 'Excel', 'Recruitment', 'HR Basics', 'Documentation'], description: 'Support the HR team with recruitment coordination, onboarding, employee records management, and HR operations.', requirements: 'MBA (HR) pursuing or completed. Good MS Office skills. Strong interpersonal skills. Eagerness to learn.', status: 'Active', postedBy: 2, postedAt: '2025-04-05', deadline: '2025-06-15', company: 'TalentBridge' },
+  { id: 'job_default_15', title: 'Product Manager', department: 'Product', location: 'Bangalore', type: 'Full-time', salary: '₹20-35 LPA', experience: '5+ years', skills: ['Product Strategy', 'Agile', 'SQL', 'User Research', 'Roadmapping'], description: 'Own product vision and roadmap for our core platform. Work with engineering, design, and business teams to ship features that delight users.', requirements: 'Proven experience managing B2B SaaS products. Strong data-driven mindset. Excellent stakeholder communication skills.', status: 'Active', postedBy: 2, postedAt: '2025-04-07', deadline: '2025-08-31', company: 'TalentBridge' }
+];
+
+// ══════════════════════════════════════════════
+//  STATE INITIALIZATION
+// ══════════════════════════════════════════════
+function initData() {
+  if (!localStorage.getItem("tb_users")) {
+    localStorage.setItem("tb_users", JSON.stringify(DEFAULT_USERS));
+  }
+  if (!localStorage.getItem("tb_jobs")) {
+    localStorage.setItem("tb_jobs", JSON.stringify(DEFAULT_JOBS));
+  }
+  // If jobs list is empty (was set to [] before), populate with defaults
+  const storedJobs = JSON.parse(localStorage.getItem("tb_jobs") || "[]");
+  if (storedJobs.length === 0) {
+    localStorage.setItem("tb_jobs", JSON.stringify(DEFAULT_JOBS));
+  }
+  if (!localStorage.getItem("tb_applications")) {
+    localStorage.setItem("tb_applications", JSON.stringify([]));
+  }
+  if (!localStorage.getItem("tb_interviews")) {
+    localStorage.setItem("tb_interviews", JSON.stringify([]));
+  }
+  if (!localStorage.getItem("tb_notifications")) {
+    localStorage.setItem("tb_notifications", JSON.stringify([]));
+  }
+}
+
+function loadData() {
+  return {
+    users: JSON.parse(localStorage.getItem("tb_users")) || DEFAULT_USERS,
+    jobs: JSON.parse(localStorage.getItem("tb_jobs")) || DEFAULT_JOBS,
+    applications: JSON.parse(localStorage.getItem("tb_applications")) || [],
+    interviews: JSON.parse(localStorage.getItem("tb_interviews")) || [],
+    notifications: JSON.parse(localStorage.getItem("tb_notifications")) || []
+  };
+}
+
+function saveData() {
+  localStorage.setItem("tb_users", JSON.stringify(state.data.users));
+  localStorage.setItem("tb_jobs", JSON.stringify(state.data.jobs));
+  localStorage.setItem("tb_applications", JSON.stringify(state.data.applications));
+  localStorage.setItem("tb_interviews", JSON.stringify(state.data.interviews));
+  localStorage.setItem("tb_notifications", JSON.stringify(state.data.notifications));
+  if (state.user) {
+    localStorage.setItem("tb_currentUser", JSON.stringify(state.user));
+  }
+}
+
+initData();
+
+let state = {
+  user: JSON.parse(localStorage.getItem("tb_currentUser")) || null,
+  page: "landing",
+  authTab: "login",
+  search: "",
+  jobFilter: "all",
+  activeTab: 0,
+  modal: null,
+  selectedRole: "candidate",
+  data: loadData()
+};
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function genId(prefix) {
+  return (prefix || 'id') + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+}
+
+function getUsers() { return state.data.users; }
+function getUser(id) { return state.data.users.find(u => u.id === id); }
+function getJob(id) { return state.data.jobs.find(j => j.id === id); }
+function getCandidates() { return state.data.users.filter(u => u.role === 'candidate'); }
+function getRecruiters() { return state.data.users.filter(u => u.role === 'recruiter'); }
+function getApplicationsForJob(jobId) { return state.data.applications.filter(a => a.jobId === jobId); }
+function getApplicationsForCandidate(cId) { return state.data.applications.filter(a => a.candidateId === cId); }
+function getUnreadNotifs(userId) { return state.data.notifications.filter(n => n.userId === userId && !n.read).length; }
+
+function formatDate(s) {
+  if (!s) return '-';
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function statusColor(s) {
+  const m = { Applied: 'badge-blue', Shortlisted: 'badge-purple', Interview: 'badge-warn', Selected: 'badge-green', Rejected: 'badge-red', Offered: 'badge-green', Withdrawn: 'badge-gray' };
+  return m[s] || 'badge-gray';
+}
+
+function scoreColor(s) {
+  if (s >= 80) return 'var(--accent3)';
+  if (s >= 60) return 'var(--warn)';
+  return 'var(--danger)';
+}
+
+function normalizeSkill(skill) {
+  return skill.toLowerCase().replace(/[\.\-]/g, '').trim();
+}
+
+const SKILL_ALIASES = {
+  "reactjs": "react", "react.js": "react", "react-js": "react",
+  "nodejs": "node", "node.js": "node",
+  "javascript": "js", "java script": "js",
+  "typescript": "ts", "type script": "ts",
+  "postgresql": "postgres", "postgres": "postgresql",
+  "mongodb": "mongo",
+  "expressjs": "express", "express.js": "express",
+  "python3": "python",
+  "c++": "cpp", "cplusplus": "cpp",
+  "html5": "html", "css3": "css",
+  "docker": "docker", "kubernetes": "k8s",
+  "aws": "aws", "amazon web services": "aws",
+  "azure": "azure", "gcp": "gcp", "google cloud": "gcp"
+};
+
+function mapAlias(skill) {
+  return SKILL_ALIASES[skill] || skill;
+}
+
+function extractSkills(skillString) {
+  return (skillString || "")
+    .split(/,|\||\/|\n|\s+/)   // handles comma, space, newline etc
+    .map(s => mapAlias(normalizeSkill(s)))
+    .filter(Boolean);
+}
+
+function scoreResume(candidateId, jobId) {
+  console.log("✅ AI scoring running");
+
+  const c = getUser(candidateId);
+  const j = getJob(jobId);
+
+  // fallback
+  if (!c || !j) return 50;
+
+  const cSkills = extractSkills(c.skills);
+  const jSkills = (j.skills || []).map(s => mapAlias(normalizeSkill(s)));
+
+  if (jSkills.length === 0) return 60;
+
+  const cSet = new Set(cSkills);
+
+  let matches = 0;
+
+  jSkills.forEach(js => {
+    // exact match OR partial match (important!)
+    const found = [...cSet].some(cs => cs.includes(js) || js.includes(cs));
+    if (found) matches++;
+  });
+
+  const matchRatio = matches / jSkills.length;
+
+  // better scoring curve
+  let score = 35 + (matchRatio * 60);
+
+  // bonus if many matches
+  if (matches >= 3) score += 5;
+
+  // slight randomness for realism
+  const noise = Math.floor(Math.random() * 5);
+
+  return Math.min(98, Math.round(score + noise));
+}
+
+
+// ══════════════════════════════════════════════
+//  NAVIGATION & EVENTS
+// ══════════════════════════════════════════════
+function navigate(page, sub) {
+  state.page = page;
+  state.search = '';
+  state.jobFilter = 'all';
+  state.activeTab = 0;
+  state.modal = null;
+  if (page === 'auth') {
+    state.authTab = sub || 'login';
+    state.user = null;
+  }
+  render();
+}
+
+function logout() {
+  state.user = null;
+  state.modal = null;
+  localStorage.removeItem("tb_currentUser");
+  navigate('landing');
+}
+
+function updateSearch(val) { state.search = val; render(); }
+function setFilter(val) { state.jobFilter = val; render(); }
+function setTab(i) { state.activeTab = i; render(); }
+function switchAuthTab(tab) { state.authTab = tab; render(); }
+function selectRole(role) { state.selectedRole = role; render(); }
+
+function openModal(type, data) { 
+  state.modal = { type, data }; 
+  render(); 
+}
+function closeModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  state.modal = null;
+  render();
+}
+
+function attachEvents() {
+  // Drag-and-drop for upload zone
+  const zone = document.getElementById('upload-zone');
+  if (zone) {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag');
+      const file = e.dataTransfer.files[0];
+      if (file) processResumeFile(file);
+    });
+  }
+}
+
+// ══════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email')?.value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass')?.value;
+  const errEl = document.getElementById('login-err');
+
+  const user = state.data.users.find(u => u.email.toLowerCase() === email && u.password === pass);
+  if (!user) { errEl.textContent = '❌ Invalid email or password.'; return; }
+  if (!user.active) { errEl.textContent = '❌ This account has been deactivated.'; return; }
+
+  state.user = { ...user };
+  localStorage.setItem("tb_currentUser", JSON.stringify(state.user));
+  state.page = 'dashboard';
+  showToast(`Welcome back, ${user.name.split(' ')[0]}! 🎉`, 'success');
+  render();
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('reg-name')?.value.trim();
+  const email = document.getElementById('reg-email')?.value.trim().toLowerCase();
+  const phone = document.getElementById('reg-phone')?.value.trim();
+  const pass = document.getElementById('reg-pass')?.value;
+  const cpass = document.getElementById('reg-cpass')?.value;
+  const role = state.selectedRole || 'candidate';
+
+  // Validation
+  let valid = true;
+  const setErr = (id, msg) => { const el = document.getElementById(id); if (el) el.textContent = msg; if (msg) valid = false; };
+  setErr('reg-name-err', name.length < 3 ? 'Name must be at least 3 characters.' : '');
+  setErr('reg-email-err', !email.includes('@') ? 'Enter a valid email.' : '');
+  setErr('reg-phone-err', !/^\d{10}$/.test(phone) ? 'Enter a valid 10-digit phone number.' : '');
+  setErr('reg-pass-err', pass.length < 8 ? 'Password must be at least 8 characters.' : '');
+  setErr('reg-cpass-err', pass !== cpass ? 'Passwords do not match.' : '');
+  if (!valid) return;
+
+  if (state.data.users.find(u => u.email.toLowerCase() === email)) {
+    document.getElementById('reg-email-err').textContent = '❌ Email already registered.';
+    return;
+  }
+
+  const newUser = {
+    id: genId('user'),
+    name, email, password: pass, phone, role,
+    active: true,
+    createdAt: new Date().toISOString().slice(0, 10),
+    skills: '', experience: '', resume: null, resumeFilename: ''
+  };
+
+  state.data.users.push(newUser);
+  saveData();
+
+  state.user = { ...newUser };
+  localStorage.setItem("tb_currentUser", JSON.stringify(state.user));
+  state.page = 'dashboard';
+  showToast(`Welcome to TalentBridge, ${name.split(' ')[0]}! 🚀`, 'success');
+  render();
+}
+
+function quickLogin(email, password) {
+  const user = state.data.users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+  if (!user) { showToast('Demo account not found. Try resetting data.', 'error'); return; }
+  state.user = { ...user };
+  localStorage.setItem("tb_currentUser", JSON.stringify(state.user));
+  state.page = 'dashboard';
+  showToast(`Logged in as ${user.role}!`, 'success');
+  render();
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function showToast(msg, type = 'info') {
+  const c = document.getElementById('toast-container');
+  if (!c) return;
+  const t = document.createElement('div');
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'slideIn .25s ease reverse';
+    setTimeout(() => t.remove(), 250);
+  }, 3500);
+}
+
+// ══════════════════════════════════════════════
+//  RENDER ENGINE
+// ══════════════════════════════════════════════
+function render() {
+  const root = document.getElementById('root');
+  if (!root) return;
+
+  if (!state.user) {
+    root.innerHTML = state.page === 'landing' ? renderLanding() : renderAuth();
+  } else {
+    const role = state.user.role;
+    if (role === 'admin') root.innerHTML = renderAdminApp();
+    else if (role === 'recruiter') root.innerHTML = renderRecruiterApp();
+    else root.innerHTML = renderCandidateApp();
+  }
+
+  attachEvents();
+}
+
+// ══════════════════════════════════════════════
+//  LANDING PAGE
+// ══════════════════════════════════════════════
+function renderLanding() {
+  return `
+  <nav class="navbar">
+    <div class="nav-logo" onclick="navigate('landing')">
+      <div class="nav-logo-dot"></div>
+      TalentBridge
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-secondary btn-sm" onclick="navigate('auth','login')">Sign In</button>
+      <button class="btn btn-primary btn-sm" onclick="navigate('auth','register')">Get Started Free</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <div style="display:inline-block;background:#1a2d5a;color:var(--accent);font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;margin-bottom:20px;letter-spacing:.5px;">
+      🚀 NEXT-GENERATION AI RECRUITMENT PLATFORM
+    </div>
+    <h1>Hire Smarter,<br/><span>Faster & Fairer</span></h1>
+    <p>TalentBridge automates your entire recruitment lifecycle — from job posting to offer letter — powered by AI-driven resume scoring and intelligent candidate matching.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary btn-lg" onclick="navigate('auth','register')">🎯 Start Hiring Free</button>
+      <button class="btn btn-outline btn-lg" onclick="navigate('auth','login')">🔐 Sign In</button>
+    </div>
+    <div style="margin-top:48px;display:flex;gap:48px;justify-content:center;flex-wrap:wrap;">
+      <div style="text-align:center"><div style="font-family:var(--font-head);font-size:32px;font-weight:800;color:var(--accent)">500+</div><div style="font-size:13px;color:var(--muted)">Companies Trust Us</div></div>
+      <div style="text-align:center"><div style="font-family:var(--font-head);font-size:32px;font-weight:800;color:var(--accent2)">12K+</div><div style="font-size:13px;color:var(--muted)">Candidates Placed</div></div>
+      <div style="text-align:center"><div style="font-family:var(--font-head);font-size:32px;font-weight:800;color:var(--accent3)">98%</div><div style="font-size:13px;color:var(--muted)">Satisfaction Rate</div></div>
+      <div style="text-align:center"><div style="font-family:var(--font-head);font-size:32px;font-weight:800;color:var(--warn)">18</div><div style="font-size:13px;color:var(--muted)">Avg Days to Hire</div></div>
+    </div>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-title">AI Resume Scoring</div><div class="feature-desc">Automatically analyze and rank resumes against job requirements, saving recruiters hours of manual screening with ML-powered matching.</div></div>
+    <div class="feature-card"><div class="feature-icon">📋</div><div class="feature-title">Smart Job Management</div><div class="feature-desc">Create, publish, and manage job postings with real-time applicant tracking, deadline reminders, and status pipelines.</div></div>
+    <div class="feature-card"><div class="feature-icon">🗓️</div><div class="feature-title">Interview Scheduling</div><div class="feature-desc">Seamless interview scheduling with type selection, interviewer assignment, feedback collection, and automated candidate notifications.</div></div>
+    <div class="feature-card"><div class="feature-icon">🔐</div><div class="feature-title">Role-Based Access</div><div class="feature-desc">Granular access control for Admins, Recruiters, and Candidates — each sees exactly what they need, nothing more.</div></div>
+    <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">Analytics & Reports</div><div class="feature-desc">Comprehensive dashboards tracking pipeline health, time-to-hire, conversion rates, and recruiter performance in real time.</div></div>
+    <div class="feature-card"><div class="feature-icon">🔔</div><div class="feature-title">Real-Time Notifications</div><div class="feature-desc">Candidates and recruiters stay informed at every stage — shortlisting, interview scheduling, feedback, and final decisions.</div></div>
+  </div>
+  <div style="background:var(--surface);border-top:1px solid var(--border);padding:48px 32px;text-align:center;">
+    <div style="font-family:var(--font-head);font-size:28px;font-weight:800;margin-bottom:10px;">Ready to Transform Your Hiring?</div>
+    <div style="color:var(--muted);font-size:15px;margin-bottom:24px;">Join thousands of companies that trust TalentBridge to find the best talent.</div>
+    <button class="btn btn-primary btn-lg" onclick="navigate('auth','register')">🚀 Get Started — It's Free</button>
+  </div>
+  <div style="border-top:1px solid var(--border);padding:20px 32px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:12px;">
+    <div>© 2024 TalentBridge. All rights reserved.</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <span>Demo: <span style="color:var(--accent)">admin@talentbridge.com / admin123</span></span>
+      <span><span style="color:var(--accent2)">recruiter@talentbridge.com / recruiter123 (HR)</span></span>
+      <span><span style="color:var(--accent3)">candidate@talentbridge.com / candidate123</span></span>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+//  AUTH PAGE
+// ══════════════════════════════════════════════
+function renderAuth() {
+  const isLogin = state.authTab === 'login';
+  return `
+  <div class="auth-page">
+    <div class="auth-glow" style="top:-200px;left:-200px;"></div>
+    <div class="auth-glow" style="bottom:-200px;right:-200px;background:radial-gradient(circle,#7c5cfc12,transparent 70%);"></div>
+    <div class="auth-container">
+      <div class="auth-logo">
+        <div><div class="auth-logo-icon">🌉</div></div>
+        <h1>TalentBridge</h1>
+        <p>Smart Recruitment Platform</p>
+      </div>
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <div class="auth-tab ${isLogin ? 'active' : ''}" onclick="switchAuthTab('login')">Sign In</div>
+          <div class="auth-tab ${!isLogin ? 'active' : ''}" onclick="switchAuthTab('register')">Register</div>
+        </div>
+        ${isLogin ? renderLoginForm() : renderRegisterForm()}
+        <div style="text-align:center;margin-top:16px;">
+          <button class="btn btn-ghost btn-sm" onclick="navigate('landing')">← Back to Home</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderLoginForm() {
+  return `
+  <form onsubmit="handleLogin(event)">
+    <div class="flex flex-col gap-2">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="login-email" type="email" placeholder="you@company.com" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-pass" type="password" placeholder="Enter your password" required />
+      </div>
+      <div class="error-msg" id="login-err" style="text-align:center;"></div>
+      <button type="submit" class="btn btn-primary w-full mt-2">🔐 Sign In to TalentBridge</button>
+    </div>
+  </form>
+  <div class="divider"></div>
+  <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:10px;">Quick Demo Access</div>
+  <div style="display:flex;flex-direction:column;gap:7px;">
+    <button class="btn btn-secondary btn-sm" onclick="quickLogin('admin@talentbridge.com','admin123')">👑 Admin Login</button>
+    <button class="btn btn-secondary btn-sm" onclick="quickLogin('recruiter@talentbridge.com','recruiter123')">👔 HR Login</button>
+    <button class="btn btn-secondary btn-sm" onclick="quickLogin('candidate@talentbridge.com','candidate123')">👤 Candidate Login</button>
+  </div>`;
+}
+
+function renderRegisterForm() {
+  const role = state.selectedRole || 'candidate';
+  return `
+  <form onsubmit="handleRegister(event)">
+    <div class="flex flex-col gap-2">
+      <div>
+        <div class="form-label" style="margin-bottom:8px;">I want to join as</div>
+        <div class="role-select-grid">
+          <div class="role-option ${role === 'candidate' ? 'selected' : ''}" onclick="selectRole('candidate')">
+            <div class="role-option-icon">👤</div>
+            <div class="role-option-label">Candidate</div>
+            <div class="role-option-sub">Find & apply for jobs</div>
+          </div>
+          <div class="role-option ${role === 'recruiter' ? 'selected' : ''}" onclick="selectRole('recruiter')">
+            <div class="role-option-icon">👔</div>
+            <div class="role-option-label">HR</div>
+            <div class="role-option-sub">Post & manage jobs</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="reg-name" type="text" placeholder="Your full name" required minlength="3"/>
+        <div class="error-msg" id="reg-name-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="reg-email" type="email" placeholder="you@email.com" required/>
+        <div class="error-msg" id="reg-email-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input class="form-input" id="reg-phone" type="tel" placeholder="10-digit phone number" required/>
+        <div class="error-msg" id="reg-phone-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="reg-pass" type="password" placeholder="Min 8 characters" required minlength="8"/>
+        <div class="error-msg" id="reg-pass-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input class="form-input" id="reg-cpass" type="password" placeholder="Repeat your password" required/>
+        <div class="error-msg" id="reg-cpass-err"></div>
+      </div>
+      <button type="submit" class="btn btn-primary w-full mt-2">🚀 Create Account</button>
+    </div>
+  </form>`;
+}
+
+// ══════════════════════════════════════════════
+//  SHARED COMPONENTS
+// ══════════════════════════════════════════════
+function renderNavbar() {
+  const u = state.user;
+  const unread = getUnreadNotifs(u.id);
+  const roleBadge = { admin: '👑 Admin', recruiter: '👔 HR', candidate: '👤 Candidate' };
+  return `
+  <nav class="navbar">
+    <div class="nav-logo" onclick="navigate('dashboard')">
+      <div class="nav-logo-dot"></div>
+      TalentBridge
+    </div>
+    <div class="nav-right">
+      <span class="badge ${u.role==='admin'?'badge-red':u.role==='recruiter'?'badge-purple':'badge-blue'}">${roleBadge[u.role]||u.role}</span>
+      <button class="btn btn-ghost btn-sm" style="position:relative" onclick="navigate('notifications')">
+        🔔
+        ${unread > 0 ? `<span style="position:absolute;top:2px;right:2px;width:16px;height:16px;background:var(--danger);border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;">${unread}</span>` : ''}
+      </button>
+      <div class="nav-avatar" onclick="navigate('profile')" title="${u.name}">${u.name ? u.name[0].toUpperCase() : '?'}</div>
+      <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </nav>`;
+}
+
+function sidebarItem(page, icon, label, active, badge) {
+  return `
+  <div class="sidebar-item ${active ? 'active' : ''}" onclick="navigate('${page}')">
+    <span class="sidebar-item-icon">${icon}</span>
+    <span>${label}</span>
+    ${badge ? `<span class="sidebar-badge">${badge}</span>` : ''}
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+//  ADMIN APP
+// ══════════════════════════════════════════════
+function renderAdminApp() {
+  const p = state.page || 'dashboard';
+  const pages = { dashboard: renderAdminDashboard, users: renderUserManagement, jobs: renderRecruiterJobs, applications: renderRecruiterApplications, reports: renderAdminReports, settings: renderSettings };
+  return `
+  ${renderNavbar()}
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-section">Main</div>
+      ${sidebarItem('dashboard','📊','Dashboard', p==='dashboard')}
+      ${sidebarItem('users','👥','User Management', p==='users')}
+      ${sidebarItem('jobs','💼','Job Postings', p==='jobs')}
+      ${sidebarItem('applications','📄','Applications', p==='applications')}
+      <div class="sidebar-section">Analytics</div>
+      ${sidebarItem('reports','📈','Reports & Analytics', p==='reports')}
+      <div class="sidebar-section">Account</div>
+      ${sidebarItem('settings','⚙️','Settings', p==='settings')}
+      ${sidebarItem('notifications','🔔','Notifications', p==='notifications', getUnreadNotifs(state.user.id)||'')}
+    </div>
+    <div class="content">${(pages[p]||renderAdminDashboard)()}</div>
+  </div>
+  ${renderModal()}`;
+}
+
+function renderAdminDashboard() {
+  const users = state.data.users;
+  const apps = state.data.applications;
+  const jobs = state.data.jobs;
+  const interviews = state.data.interviews;
+  const candidates = users.filter(u => u.role === 'candidate').length;
+  const recruiters = users.filter(u => u.role === 'recruiter').length;
+  const activeJobs = jobs.filter(j => (j.status||'Active') === 'Active').length;
+  const hired = apps.filter(a => a.status === 'Selected').length;
+  const shortlisted = apps.filter(a => a.shortlisted).length;
+
+  return `
+  <div class="page-header">
+    <div>
+      <div class="page-title">Admin Dashboard</div>
+      <div class="page-subtitle">System overview and recruitment performance</div>
+    </div>
+    <div class="badge badge-green">● System Healthy</div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Total Users</div><div class="stat-value" style="color:var(--accent)">${users.length}</div><div class="stat-sub">${candidates} candidates · ${recruiters} recruiters</div></div>
+    <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-label">Active Jobs</div><div class="stat-value" style="color:var(--accent2)">${activeJobs}</div><div class="stat-sub">${jobs.length} total postings</div></div>
+    <div class="stat-card"><div class="stat-icon">📄</div><div class="stat-label">Applications</div><div class="stat-value" style="color:var(--accent3)">${apps.length}</div><div class="stat-sub">${shortlisted} shortlisted</div></div>
+    <div class="stat-card"><div class="stat-icon">🎉</div><div class="stat-label">Hired</div><div class="stat-value" style="color:var(--warn)">${hired}</div><div class="stat-sub">Offer acceptance: 94%</div></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="card">
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:16px;">📊 Application Pipeline</div>
+      ${['Applied','Shortlisted','Interview','Selected','Rejected'].map(s => {
+        const count = apps.filter(a => a.status === s).length;
+        const pct = Math.round((count / Math.max(apps.length, 1)) * 100);
+        return `<div style="margin-bottom:14px;">
+          <div class="flex justify-between text-sm" style="margin-bottom:5px;"><span>${s}</span><span style="color:var(--muted)">${count} (${pct}%)</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${s==='Selected'?'var(--accent3)':s==='Rejected'?'var(--danger)':'var(--accent)'}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:16px;">👥 Recent Users</div>
+      ${users.slice(-6).reverse().map(u => `
+        <div class="flex items-center gap-2" style="padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">${u.name?u.name[0].toUpperCase():'U'}</div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:600;">${u.name||'Unknown'}</div><div class="text-xs text-muted">${u.email||'-'}</div></div>
+          <div class="badge ${u.role==='admin'?'badge-red':u.role==='recruiter'?'badge-purple':'badge-blue'}">${u.role}</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:16px;">💼 Top Job Postings</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Job Title</th><th>Department</th><th>Status</th><th>Applicants</th><th>Posted</th></tr></thead>
+        <tbody>
+          ${jobs.map(j => `
+            <tr>
+              <td><div style="font-weight:600">${j.title}</div><div class="text-xs text-muted">${j.location}</div></td>
+              <td>${j.department||'-'}</td>
+              <td><span class="badge ${(j.status||'Active')==='Active'?'badge-green':'badge-gray'}">${j.status||'Active'}</span></td>
+              <td><span class="badge badge-blue">${getApplicationsForJob(j.id).length}</span></td>
+              <td class="text-muted">${formatDate(j.postedAt)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderUserManagement() {
+  const search = state.search.toLowerCase();
+  const filtered = state.data.users.filter(u =>
+    (u.name||'').toLowerCase().includes(search) || (u.email||'').toLowerCase().includes(search)
+  ).filter(u => !state.jobFilter || state.jobFilter === 'all' || u.role === state.jobFilter);
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">User Management</div><div class="page-subtitle">Manage all system users and permissions</div></div>
+    <button class="btn btn-primary" onclick="openModal('addUser')">+ Add User</button>
+  </div>
+  <div class="flex gap-2" style="margin-bottom:20px;flex-wrap:wrap;">
+    <div class="search-bar" style="max-width:360px;"><span>🔍</span><input placeholder="Search users…" value="${state.search}" oninput="updateSearch(this.value)" /></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      ${['All','Admin','Recruiter','Candidate'].map(r => `<button class="btn btn-sm ${(state.jobFilter===r.toLowerCase()||(!state.jobFilter&&r==='All'))?'btn-primary':'btn-secondary'}" onclick="setFilter('${r.toLowerCase()}')">${r}</button>`).join('')}
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>User</th><th>Role</th><th>Phone</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${filtered.map(u => `
+          <tr>
+            <td><div class="flex items-center gap-1">
+              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">${(u.name||'U')[0].toUpperCase()}</div>
+              <div><div style="font-weight:600">${u.name}</div><div class="text-xs text-muted">${u.email}</div></div>
+            </div></td>
+            <td><span class="badge ${u.role==='admin'?'badge-red':u.role==='recruiter'?'badge-purple':'badge-blue'}">${u.role}</span></td>
+            <td class="text-muted">${u.phone||'-'}</td>
+            <td><span class="badge ${u.active?'badge-green':'badge-gray'}">${u.active?'Active':'Inactive'}</span></td>
+            <td class="text-muted">${formatDate(u.createdAt)}</td>
+            <td><div class="flex gap-1">
+              <button class="btn btn-sm btn-secondary" onclick="openModal('viewUser',${JSON.stringify(u.id).replace(/"/g,'&quot;')})">👁️ View</button>
+              <button class="btn btn-sm ${u.active?'btn-danger':'btn-success'}" onclick="toggleUserStatus('${u.id}')">${u.active?'Disable':'Enable'}</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')">🗑️</button>
+            </div></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderAdminReports() {
+  const users = state.data.users;
+  const jobs = state.data.jobs;
+  const apps = state.data.applications;
+  const hired = apps.filter(a => a.status === 'Selected').length;
+  const convRate = apps.length ? Math.round((hired / apps.length) * 100) : 0;
+  const avgScore = apps.length ? Math.round(apps.reduce((s, a) => s + (a.resumeScore || 60), 0) / apps.length) : 0;
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Reports & Analytics</div><div class="page-subtitle">Comprehensive recruitment performance metrics</div></div>
+    <button class="btn btn-secondary" onclick="showToast('Report exported!','success')">📥 Export Report</button>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-label">Conversion Rate</div><div class="stat-value">${convRate}%</div></div>
+    <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-label">Avg AI Score</div><div class="stat-value">${avgScore}%</div></div>
+    <div class="stat-card"><div class="stat-icon">⏱️</div><div class="stat-label">Avg Time-to-Hire</div><div class="stat-value">18 days</div></div>
+    <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Cost-per-Hire</div><div class="stat-value">₹12K</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:16px;">📊 Jobs by Department</div>
+      ${[...new Set(jobs.map(j => j.department||'General'))].map(dept => {
+        const count = jobs.filter(j => (j.department||'General') === dept).length;
+        const pct = Math.round((count / Math.max(jobs.length, 1)) * 100);
+        return `<div style="margin-bottom:12px;">
+          <div class="flex justify-between text-sm"><span>${dept}</span><span>${count} jobs</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:16px;">🏆 Top HR Staff</div>
+      ${getRecruiters().map((r, i) => {
+        const posted = jobs.filter(j => j.postedBy === r.id).length;
+        const hiredCount = apps.filter(a => a.status === 'Selected' && jobs.some(j => j.id === a.jobId && j.postedBy === r.id)).length;
+        return `<div style="padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="font-weight:600">${i+1}. ${r.name}</div>
+          <div class="text-sm text-muted">${posted} jobs posted · ${hiredCount} candidates hired</div>
+        </div>`;
+      }).join('')}
+      ${getRecruiters().length === 0 ? '<div class="text-muted text-sm">No recruiters yet.</div>' : ''}
+    </div>
+  </div>`;
+}
+
+function renderSettings() {
+  const u = state.user;
+  return `
+  <div class="page-title" style="margin-bottom:24px;">⚙️ Profile & Settings</div>
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:16px;">Profile Settings</div>
+      <div class="flex flex-col gap-2">
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="p-name" value="${u.name||''}" /></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="p-email" value="${u.email||''}" type="email" /></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="p-phone" value="${u.phone||''}" /></div>
+        <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:16px;">🔐 Security</div>
+      <div class="flex flex-col gap-2">
+        <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" type="password" id="cp-cur" placeholder="••••••••" /></div>
+        <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" id="cp-new" placeholder="Min 8 characters" /></div>
+        <div class="form-group"><label class="form-label">Confirm New Password</label><input class="form-input" type="password" id="cp-confirm" placeholder="Repeat new password" /></div>
+        <button class="btn btn-primary" onclick="changePassword()">🔐 Update Password</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+//  RECRUITER APP
+// ══════════════════════════════════════════════
+function renderRecruiterApp() {
+  const p = state.page || 'dashboard';
+  const pages = { dashboard: renderRecruiterDashboard, jobs: renderRecruiterJobs, applications: renderRecruiterApplications, candidates: renderCandidateManagement, interviews: renderInterviewManagement, notifications: renderNotifications, settings: renderSettings, profile: renderSettings };
+  return `
+  ${renderNavbar()}
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-section">Recruitment</div>
+      ${sidebarItem('dashboard','📊','Dashboard', p==='dashboard')}
+      ${sidebarItem('jobs','💼','Job Postings', p==='jobs')}
+      ${sidebarItem('applications','📄','Applications', p==='applications')}
+      ${sidebarItem('candidates','👥','Candidates', p==='candidates')}
+      ${sidebarItem('interviews','🗓️','Interviews', p==='interviews')}
+      <div class="sidebar-section">Account</div>
+      ${sidebarItem('notifications','🔔','Notifications', p==='notifications', getUnreadNotifs(state.user.id)||'')}
+      ${sidebarItem('settings','⚙️','Settings', p==='settings')}
+    </div>
+    <div class="content">${(pages[p]||renderRecruiterDashboard)()}</div>
+  </div>
+  ${renderModal()}`;
+}
+
+function renderRecruiterDashboard() {
+  const jobs = state.data.jobs;
+  const apps = state.data.applications;
+  const interviews = state.data.interviews;
+  const userId = state.user.id;
+  const myJobs = jobs.filter(j => j.postedBy === userId);
+  const myJobIds = myJobs.map(j => j.id);
+  const myApps = apps.filter(a => myJobIds.includes(a.jobId));
+  const shortlisted = myApps.filter(a => a.shortlisted).length;
+  const scheduledInterviews = interviews.filter(i => myJobIds.includes(i.jobId) && i.status === 'Scheduled').length;
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Welcome back, ${(state.user.name||'User').split(' ')[0]}! 👋</div><div class="page-subtitle">Here's your recruitment pipeline at a glance</div></div>
+    <button class="btn btn-primary" onclick="openModal('postJob')">+ Post New Job</button>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-label">My Job Postings</div><div class="stat-value" style="color:var(--accent)">${myJobs.length}</div><div class="stat-sub">${myJobs.filter(j=>(j.status||'Active')==='Active').length} active</div></div>
+    <div class="stat-card"><div class="stat-icon">📄</div><div class="stat-label">Total Applications</div><div class="stat-value" style="color:var(--accent2)">${myApps.length}</div><div class="stat-sub">${shortlisted} shortlisted</div></div>
+    <div class="stat-card"><div class="stat-icon">🗓️</div><div class="stat-label">Scheduled Interviews</div><div class="stat-value" style="color:var(--accent3)">${scheduledInterviews}</div><div class="stat-sub">Upcoming</div></div>
+    <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-label">Shortlisted</div><div class="stat-value" style="color:var(--warn)">${shortlisted}</div><div class="stat-sub">Ready for interview</div></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="card">
+      <div class="flex justify-between items-center" style="margin-bottom:16px;">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;">My Recent Jobs</div>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('jobs')">View all →</button>
+      </div>
+      ${myJobs.length === 0 ? `<div class="empty-state" style="padding:30px"><div class="empty-icon">💼</div><div class="empty-title">No jobs posted yet</div><button class="btn btn-primary btn-sm mt-2" onclick="openModal('postJob')">Post your first job</button></div>` : myJobs.slice(0,5).map(j => `
+        <div class="flex justify-between items-center" style="padding:12px 0;border-bottom:1px solid var(--border);">
+          <div><div style="font-size:13px;font-weight:600">${j.title}</div><div class="text-xs text-muted">${j.location} · ${getApplicationsForJob(j.id).length} applicants</div></div>
+          <span class="badge ${(j.status||'Active')==='Active'?'badge-green':'badge-gray'}">${j.status||'Active'}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="card">
+      <div class="flex justify-between items-center" style="margin-bottom:16px;">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;">Recent Applications</div>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('applications')">View all →</button>
+      </div>
+      ${myApps.length === 0 ? `<div class="empty-state" style="padding:30px"><div class="empty-icon">📄</div><div class="empty-title">No applications yet</div></div>` : myApps.slice(0,5).map(a => {
+        const c = getUser(a.candidateId);
+        const j = getJob(a.jobId);
+        if (!c || !j) return '';
+        return `<div class="flex justify-between items-center" style="padding:10px 0;border-bottom:1px solid var(--border);">
+          <div class="flex items-center gap-1">
+            <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">${(c.name||'U')[0].toUpperCase()}</div>
+            <div><div style="font-size:12px;font-weight:600">${c.name}</div><div class="text-xs text-muted">${j.title}</div></div>
+          </div>
+          <div class="flex items-center gap-1">
+            <span style="font-size:12px;font-weight:700;color:${scoreColor(a.resumeScore||50)}">${a.resumeScore||50}%</span>
+            <span class="badge ${statusColor(a.status)}">${a.status}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function renderRecruiterJobs() {
+  const jobs = state.data.jobs;
+  const search = (state.search||'').toLowerCase();
+  const myJobs = state.user.role === 'admin' ? jobs : jobs.filter(j => j.postedBy === state.user.id);
+  const filtered = myJobs.filter(j => {
+    const match = (j.title||'').toLowerCase().includes(search) || (j.department||'').toLowerCase().includes(search) || (j.location||'').toLowerCase().includes(search);
+    const statusMatch = !state.jobFilter || state.jobFilter === 'all' || (j.status||'active').toLowerCase() === state.jobFilter;
+    return match && statusMatch;
+  });
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Job Postings</div><div class="page-subtitle">Manage and track all job listings</div></div>
+    <button class="btn btn-primary" onclick="openModal('postJob')">+ Post New Job</button>
+  </div>
+  <div class="flex gap-2" style="margin-bottom:20px;flex-wrap:wrap;">
+    <div class="search-bar" style="max-width:360px;"><span>🔍</span><input placeholder="Search jobs…" value="${state.search||''}" oninput="updateSearch(this.value)" /></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      ${['All','Active','Closed'].map(s => `<button class="btn btn-sm ${(state.jobFilter===s.toLowerCase()||(!state.jobFilter&&s==='All'))?'btn-primary':'btn-secondary'}" onclick="setFilter('${s.toLowerCase()}')">${s}</button>`).join('')}
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Job Title</th><th>Department</th><th>Location</th><th>Salary</th><th>Status</th><th>Applicants</th><th>Deadline</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${filtered.length === 0 ? `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--muted)">No jobs found</td></tr>` : filtered.map(j => `
+          <tr>
+            <td><div style="font-weight:600">${j.title}</div><div class="text-xs text-muted">${j.type||'-'}</div></td>
+            <td>${j.department||'-'}</td>
+            <td>${j.location||'-'}</td>
+            <td class="text-sm">${j.salary||'-'}</td>
+            <td><span class="badge ${(j.status||'Active')==='Active'?'badge-green':'badge-gray'}">${j.status||'Active'}</span></td>
+            <td><span class="badge badge-blue">${getApplicationsForJob(j.id).length}</span></td>
+            <td class="text-muted text-sm">${formatDate(j.deadline)}</td>
+            <td><div class="flex gap-1">
+              <button class="btn btn-sm btn-secondary" onclick="openModal('viewJob','${j.id}')">👁️ View</button>
+              <button class="btn btn-sm btn-primary" onclick="openModal('viewApplicants','${j.id}')">📋 Applicants</button>
+              ${(j.status||'Active')==='Active'?`<button class="btn btn-sm btn-danger" onclick="closeJob('${j.id}')">✕ Close</button>`:''}
+            </div></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderRecruiterApplications() {
+  const jobs = state.data.jobs;
+  const apps = state.data.applications;
+  const search = (state.search||'').toLowerCase();
+  const myJobIds = state.user.role === 'admin' ? jobs.map(j => j.id) : jobs.filter(j => j.postedBy === state.user.id).map(j => j.id);
+  const myApps = apps.filter(a => myJobIds.includes(a.jobId));
+  const filtered = myApps.filter(a => {
+    const c = getUser(a.candidateId);
+    const j = getJob(a.jobId);
+    const nameMatch = (c?.name||'').toLowerCase().includes(search) || (j?.title||'').toLowerCase().includes(search);
+    const statusMatch = !state.jobFilter || state.jobFilter === 'all' || (a.status||'').toLowerCase() === state.jobFilter;
+    return nameMatch && statusMatch;
+  }).sort((a,b) => (b.resumeScore||0) - (a.resumeScore||0));
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Applications</div><div class="page-subtitle">Review and manage candidate applications from jobs you posted</div></div>
+    <button class="btn btn-secondary" onclick="showToast('Shortlisted candidates exported!','success')">📥 Export</button>
+  </div>
+  <div class="flex gap-2" style="margin-bottom:20px;flex-wrap:wrap;">
+    <div class="search-bar" style="max-width:360px;"><span>🔍</span><input placeholder="Search candidates or jobs…" value="${state.search||''}" oninput="updateSearch(this.value)" /></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      ${['All','Applied','Shortlisted','Interview','Selected','Rejected'].map(s => `<button class="btn btn-sm ${(state.jobFilter===s.toLowerCase()||(!state.jobFilter&&s==='All'))?'btn-primary':'btn-secondary'}" onclick="setFilter('${s.toLowerCase()}')">${s}</button>`).join('')}
+    </div>
+  </div>
+  ${filtered.length === 0 ? `<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-title">No applications found</div><p class="text-muted text-sm">Applications from candidates who apply to your jobs will appear here.</p></div>` : `
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Candidate</th><th>Job Applied</th><th>AI Score</th><th>Status</th><th>Applied On</th><th>Shortlisted</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${filtered.map(a => {
+          const c = getUser(a.candidateId);
+          const j = getJob(a.jobId);
+          if (!c || !j) return '';
+          return `<tr>
+            <td><div class="flex items-center gap-1">
+              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">${(c.name||'U')[0].toUpperCase()}</div>
+              <div><div style="font-size:13px;font-weight:600">${c.name}</div><div class="text-xs text-muted">${c.experience||'N/A'} exp</div></div>
+            </div></td>
+            <td><div style="font-size:13px">${j.title}</div><div class="text-xs text-muted">${j.department||'-'}</div></td>
+            <td><div class="score-wrap"><div class="score-bar"><div class="progress-bar"><div class="progress-fill" style="width:${a.resumeScore||60}%;background:${scoreColor(a.resumeScore||60)}"></div></div></div><span style="font-size:12px;font-weight:700;color:${scoreColor(a.resumeScore||60)}">${a.resumeScore||60}%</span></div></td>
+            <td><span class="badge ${statusColor(a.status)}">${a.status}</span></td>
+            <td class="text-muted text-sm">${formatDate(a.appliedAt)}</td>
+            <td>${a.shortlisted?'<span class="badge badge-green">✅ Yes</span>':'<span class="badge badge-gray">No</span>'}</td>
+            <td><div class="flex gap-1">
+              <button class="btn btn-sm btn-secondary" onclick="openModal('viewCandidate','${c.id}')">👁️ Profile</button>
+              ${c.resume?`<button class="btn btn-sm btn-secondary" onclick="viewResume('${c.id}')">📄 Resume</button>`:''}
+              ${!a.shortlisted?`<button class="btn btn-sm btn-purple" onclick="shortlistCandidate('${a.id}')">⭐ Shortlist</button>`:''}
+              ${a.shortlisted && a.status!=='Interview'?`<button class="btn btn-sm btn-success" onclick="openModal('scheduleInterview','${a.id}')">🗓️ Interview</button>`:''}
+              <select class="form-select" style="padding:4px 8px;font-size:11px;width:auto;" onchange="updateAppStatus('${a.id}',this.value)">
+                <option value="">Update</option>
+                ${['Applied','Shortlisted','Interview','Selected','Rejected'].map(s=>`<option value="${s}" ${a.status===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`}`;
+}
+
+function renderCandidateManagement() {
+  const search = (state.search||'').toLowerCase();
+  const candidates = getCandidates().filter(c =>
+    (c.name||'').toLowerCase().includes(search) ||
+    (c.email||'').toLowerCase().includes(search) ||
+    (c.skills||'').toLowerCase().includes(search)
+  );
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Candidate Management</div><div class="page-subtitle">Browse and manage candidate profiles</div></div>
+  </div>
+  <div class="search-bar" style="max-width:420px;margin-bottom:20px;"><span>🔍</span><input placeholder="Search by name, skills, email…" value="${state.search||''}" oninput="updateSearch(this.value)" /></div>
+  <div class="grid-3">
+    ${candidates.length === 0 ? `<div class="empty-state">No candidates registered yet</div>` : candidates.map(c => {
+      const apps = getApplicationsForCandidate(c.id);
+      return `<div class="card" style="cursor:pointer" onclick="openModal('viewCandidate','${c.id}')">
+        <div class="flex items-center gap-2" style="margin-bottom:14px;">
+          <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;">${(c.name||'U')[0].toUpperCase()}</div>
+          <div><div style="font-weight:700;font-size:15px">${c.name}</div><div class="text-xs text-muted">${c.email}</div></div>
+        </div>
+        <div class="text-sm text-muted" style="margin-bottom:10px;">📞 ${c.phone||'N/A'} · 💼 ${c.experience||'Not specified'}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">${(c.skills||'').split(',').filter(Boolean).slice(0,3).map(s=>`<span class="badge badge-blue">${s.trim()}</span>`).join('')}</div>
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-muted">${apps.length} application${apps.length!==1?'s':''}</span>
+          <span class="badge ${c.resume?'badge-green':'badge-gray'}">${c.resume?'📄 Resume':'No Resume'}</span>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderInterviewManagement() {
+  const interviews = state.data.interviews;
+  const myJobIds = state.user.role === 'admin' ? state.data.jobs.map(j => j.id) : state.data.jobs.filter(j => j.postedBy === state.user.id).map(j => j.id);
+  const myInterviews = interviews.filter(i => myJobIds.includes(i.jobId));
+  const tabLabels = ['All','Scheduled','Completed','Cancelled'];
+  const tabFiltered = myInterviews.filter(i => state.activeTab === 0 || i.status.toLowerCase() === tabLabels[state.activeTab].toLowerCase());
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Interview Management</div><div class="page-subtitle">Schedule, track and manage all interviews</div></div>
+    <button class="btn btn-primary" onclick="openModal('addInterview')">+ Schedule Interview</button>
+  </div>
+  <div class="tabs">
+    ${tabLabels.map((t,i) => `<div class="tab ${state.activeTab===i?'active':''}" onclick="setTab(${i})">${t} ${i===0?`(${myInterviews.length})`:''}</div>`).join('')}
+  </div>
+  ${tabFiltered.length === 0 ? `<div class="empty-state"><div class="empty-icon">🗓️</div><div class="empty-title">No interviews ${state.activeTab===0?'scheduled yet':'in this category'}</div><p class="text-muted text-sm">Shortlist candidates first, then schedule interviews.</p></div>` : `
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Candidate</th><th>Job Role</th><th>Type</th><th>Scheduled</th><th>Duration</th><th>Interviewer</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${tabFiltered.map(i => {
+          const c = getUser(i.candidateId);
+          const j = getJob(i.jobId);
+          if (!c || !j) return '';
+          return `<tr>
+            <td><div style="font-weight:600">${c.name}</div><div class="text-xs text-muted">${c.email}</div></td>
+            <td>${j.title}</td>
+            <td><span class="badge badge-blue">${i.type||'Technical'}</span></td>
+            <td>${formatDate(i.scheduledAt)}<div class="text-xs text-muted">${i.scheduledTime||''}</div></td>
+            <td>${i.duration||60} min</td>
+            <td>${i.interviewer||'TBD'}</td>
+            <td>${i.location||'Google Meet'}</td>
+            <td><span class="badge ${i.status==='Scheduled'?'badge-warn':i.status==='Completed'?'badge-green':'badge-gray'}">${i.status}</span></td>
+            <td><div class="flex gap-1">
+              ${i.status==='Scheduled'?`<button class="btn btn-sm btn-success" onclick="completeInterview('${i.id}')">✓ Done</button>`:''}
+              ${i.status==='Completed'&&!i.feedback?`<button class="btn btn-sm btn-primary" onclick="openModal('addFeedback','${i.id}')">💬 Feedback</button>`:''}
+              ${i.feedback?`<button class="btn btn-sm btn-secondary" onclick="openModal('viewFeedback','${i.id}')">📋 View</button>`:''}
+            </div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`}`;
+}
+
+// ══════════════════════════════════════════════
+//  CANDIDATE APP
+// ══════════════════════════════════════════════
+function renderCandidateApp() {
+  const p = state.page || 'dashboard';
+  const pages = { dashboard: renderCandidateDashboard, jobs: renderJobSearch, applications: renderMyApplications, profile: renderCandidateProfile, notifications: renderNotifications };
+  return `
+  ${renderNavbar()}
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-section">My Space</div>
+      ${sidebarItem('dashboard','📊','Dashboard', p==='dashboard')}
+      ${sidebarItem('jobs','🔍','Browse Jobs', p==='jobs')}
+      ${sidebarItem('applications','📄','My Applications', p==='applications')}
+      ${sidebarItem('profile','👤','My Profile', p==='profile')}
+      <div class="sidebar-section">More</div>
+      ${sidebarItem('notifications','🔔','Notifications', p==='notifications', getUnreadNotifs(state.user.id)||'')}
+    </div>
+    <div class="content">${(pages[p]||renderCandidateDashboard)()}</div>
+  </div>
+  ${renderModal()}`;
+}
+
+function renderCandidateDashboard() {
+  const user = state.user;
+  const myApps = getApplicationsForCandidate(user.id);
+  const interviews = state.data.interviews.filter(i => i.candidateId === user.id);
+  const shortlisted = myApps.filter(a => a.shortlisted).length;
+  const activeJobs = state.data.jobs.filter(j => (j.status||'Active') === 'Active').length;
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Hello, ${(user.name||'User').split(' ')[0]}! 👋</div><div class="page-subtitle">Your job search journey at a glance</div></div>
+    <button class="btn btn-primary" onclick="navigate('jobs')">🔍 Browse Jobs</button>
+  </div>
+  ${!user.resume ? `
+    <div class="card" style="background:#1a2d5a30;border-color:var(--accent);margin-bottom:24px;">
+      <div class="flex items-center gap-2">
+        <span style="font-size:28px">⚠️</span>
+        <div style="flex:1;"><div style="font-weight:700;color:var(--accent)">Upload Your Resume</div><div style="font-size:13px;color:var(--muted)">Increase your chances — upload your resume for AI skill matching</div></div>
+        <button class="btn btn-primary" onclick="navigate('profile')">Upload Resume →</button>
+      </div>
+    </div>` : ''}
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-icon">📄</div><div class="stat-label">Applications Sent</div><div class="stat-value" style="color:var(--accent)">${myApps.length}</div><div class="stat-sub">Total submitted</div></div>
+    <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-label">Shortlisted</div><div class="stat-value" style="color:var(--accent2)">${shortlisted}</div><div class="stat-sub">Moved forward</div></div>
+    <div class="stat-card"><div class="stat-icon">🗓️</div><div class="stat-label">Interviews</div><div class="stat-value" style="color:var(--accent3)">${interviews.length}</div><div class="stat-sub">Scheduled / completed</div></div>
+    <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-label">Open Jobs</div><div class="stat-value" style="color:var(--warn)">${activeJobs}</div><div class="stat-sub">Available now</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="flex justify-between items-center" style="margin-bottom:16px;">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;">My Recent Applications</div>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('applications')">View all →</button>
+      </div>
+      ${myApps.length === 0 ? `<div class="empty-state" style="padding:30px"><div class="empty-icon">📄</div><div class="empty-title">No applications yet</div><p class="text-muted text-sm">Start applying for jobs!</p><button class="btn btn-primary btn-sm mt-2" onclick="navigate('jobs')">Browse Jobs</button></div>` : myApps.slice(0,5).map(a => {
+        const j = getJob(a.jobId);
+        if (!j) return '';
+        return `<div class="flex justify-between items-center" style="padding:12px 0;border-bottom:1px solid var(--border);">
+          <div><div style="font-size:13px;font-weight:600">${j.title}</div><div class="text-xs text-muted">${j.location} · ${formatDate(a.appliedAt)}</div></div>
+          <span class="badge ${statusColor(a.status)}">${a.status}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div class="flex justify-between items-center" style="margin-bottom:16px;">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;">Recommended Jobs</div>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('jobs')">View all →</button>
+      </div>
+      ${state.data.jobs.filter(j=>(j.status||'Active')==='Active').slice(0,4).map(j => `
+        <div class="flex justify-between items-center" style="padding:12px 0;border-bottom:1px solid var(--border);">
+          <div><div style="font-size:13px;font-weight:600">${j.title}</div><div class="text-xs text-muted">${j.location} · ${j.salary}</div></div>
+          <button class="btn btn-sm btn-outline" onclick="openModal('applyJob','${j.id}')">Apply</button>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+}
+
+function renderJobSearch() {
+  const search = state.search.toLowerCase();
+  const filter = state.jobFilter;
+  const jobs = state.data.jobs.filter(j => {
+    const s = (j.status||'Active');
+    const match = (j.title||'').toLowerCase().includes(search) || (j.company||'').toLowerCase().includes(search) || (j.location||'').toLowerCase().includes(search) || (j.department||'').toLowerCase().includes(search) || (j.skills||[]).some(sk => sk.toLowerCase().includes(search));
+    const typeMatch = !filter || filter==='all' || (filter==='remote'&&(j.location||'').toLowerCase()==='remote') || (filter==='full-time'&&j.type==='Full-time') || (filter==='contract'&&j.type==='Contract') || (filter==='part-time'&&j.type==='Part-time');
+    return s==='Active' && match && typeMatch;
+  });
+  const appliedIds = getApplicationsForCandidate(state.user.id).map(a => a.jobId);
+
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Browse Jobs</div><div class="page-subtitle">${jobs.length} opportunities available</div></div>
+  </div>
+  <div class="flex gap-2" style="margin-bottom:20px;flex-wrap:wrap;">
+    <div class="search-bar" style="flex:1;min-width:240px;"><span>🔍</span><input placeholder="Search by role, skill, company, location…" value="${state.search}" oninput="updateSearch(this.value)" /></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      ${['All','Remote','Full-time','Part-time','Contract'].map(f => `<button class="btn btn-sm ${(state.jobFilter===f.toLowerCase()||(!state.jobFilter&&f==='All'))?'btn-primary':'btn-secondary'}" onclick="setFilter('${f.toLowerCase()}')">${f}</button>`).join('')}
+    </div>
+  </div>
+  <div class="grid-2">
+    ${jobs.map(j => {
+      const applied = appliedIds.includes(j.id);
+      return `<div class="job-card" onclick="openModal('viewJobCandidate','${j.id}')">
+        <div class="flex justify-between items-start" style="margin-bottom:10px;">
+          <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;">🏢</div>
+          <span class="badge ${j.type==='Contract'?'badge-warn':j.type==='Part-time'?'badge-gray':'badge-green'}">${j.type}</span>
+        </div>
+        <div class="job-card-title">${j.title}</div>
+        <div class="job-card-company">${j.company||'TechCorp'} · ${j.department}</div>
+        <div class="job-card-tags">${(j.skills||[]).slice(0,3).map(s=>`<span class="badge badge-blue">${s}</span>`).join('')}</div>
+        <div class="job-card-footer">
+          <div><div style="font-size:13px;font-weight:600;color:var(--accent3)">${j.salary}</div><div class="text-xs text-muted">📍 ${j.location} · ⏱️ ${j.experience}</div></div>
+          ${applied ? '<span class="badge badge-green">✅ Applied</span>' : `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('applyJob','${j.id}')">Apply Now</button>`}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>
+  ${jobs.length === 0 ? `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No jobs found</div><p class="text-muted text-sm">Try different keywords or remove filters</p></div>` : ''}`;
+}
+
+function renderMyApplications() {
+  const apps = getApplicationsForCandidate(state.user.id);
+  return `
+  <div class="page-header">
+    <div><div class="page-title">My Applications</div><div class="page-subtitle">Track all your job applications and interview status</div></div>
+  </div>
+  ${apps.length === 0 ? `<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-title">No applications yet</div><p class="text-muted text-sm">Browse jobs and apply to see them here</p><button class="btn btn-primary mt-2" onclick="navigate('jobs')">Browse Jobs</button></div>` : `
+  <div class="flex flex-col gap-2">
+    ${apps.map(a => {
+      const j = getJob(a.jobId);
+      if (!j) return '';
+      const interview = state.data.interviews.find(i => i.applicationId === a.id);
+      return `<div class="card">
+        <div class="flex justify-between items-start">
+          <div style="flex:1;">
+            <div style="font-family:var(--font-head);font-size:16px;font-weight:700;">${j.title}</div>
+            <div class="text-muted text-sm" style="margin-top:4px;">${j.company||'TechCorp'} · ${j.location} · ${j.type}</div>
+            <div class="flex gap-2 items-center" style="margin-top:10px;flex-wrap:wrap;">
+              <span class="badge ${statusColor(a.status)}">● ${a.status}</span>
+              <span class="text-xs text-muted">Applied ${formatDate(a.appliedAt)}</span>
+              ${a.resumeScore?`<span style="font-size:12px;color:${scoreColor(a.resumeScore)};font-weight:700;">AI Score: ${a.resumeScore}%</span>`:''}
+              ${a.shortlisted?'<span class="badge badge-purple">⭐ Shortlisted</span>':''}
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;margin-left:16px;">
+            <div style="font-weight:700;color:var(--accent3)">${j.salary}</div>
+            <div class="text-xs text-muted mt-1">${j.department}</div>
+          </div>
+        </div>
+        ${interview ? `
+        <div style="margin-top:14px;padding:14px;background:var(--surface2);border-radius:10px;border:1px solid var(--accent)30;">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;">🗓️ INTERVIEW SCHEDULED</div>
+          <div class="flex gap-3 flex-wrap text-sm">
+            <span>📅 ${formatDate(i => i.scheduledAt) || formatDate(interview.scheduledAt)}</span>
+            <span>⏱️ ${interview.duration||60} min</span>
+            <span>👤 ${interview.interviewer||'HR Team'}</span>
+            <span>📍 ${interview.location||'Google Meet'}</span>
+            <span class="badge ${interview.status==='Completed'?'badge-green':'badge-warn'}">${interview.status}</span>
+          </div>
+          ${interview.meetLink?`<a href="${interview.meetLink}" style="font-size:12px;color:var(--accent);margin-top:6px;display:inline-block;">🔗 Join Meeting</a>`:''}
+          ${interview.status==='Completed'&&interview.feedback?`<div style="margin-top:8px;padding:8px;background:var(--surface);border-radius:7px;font-size:12px;color:var(--accent3);">💬 Feedback: ${interview.rating}/5 ⭐ — ${interview.feedback}</div>`:''}
+        </div>` : ''}
+      </div>`;
+    }).join('')}
+  </div>`}`;
+}
+
+function renderCandidateProfile() {
+  const u = state.user;
+  return `
+  <div class="page-title" style="margin-bottom:24px;">👤 My Profile</div>
+  <div class="grid-2">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;margin:0 auto 12px;">${u.name?u.name[0].toUpperCase():'U'}</div>
+        <div style="font-family:var(--font-head);font-size:20px;font-weight:700;">${u.name}</div>
+        <div class="text-muted text-sm">${u.email}</div>
+        <div class="badge badge-blue" style="margin-top:8px;">Candidate</div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="p-name" value="${u.name||''}" /></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="p-email" value="${u.email||''}" type="email" /></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="p-phone" value="${u.phone||''}" /></div>
+        <div class="form-group"><label class="form-label">Years of Experience</label><input class="form-input" id="p-exp" value="${u.experience||''}" placeholder="e.g., 3 years" /></div>
+        <div class="form-group"><label class="form-label">Skills (comma separated)</label><textarea class="form-textarea" id="p-skills" placeholder="React, Node.js, Python…">${u.skills||''}</textarea></div>
+        <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
+      </div>
+    </div>
+    <div class="flex flex-col gap-3">
+      <div class="card">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:14px;">📄 Resume</div>
+        ${u.resume ? `
+          <div style="padding:16px;background:var(--surface2);border-radius:10px;border:1px solid var(--accent);margin-bottom:14px;">
+            <div class="flex items-center gap-2">
+              <span style="font-size:24px;">📄</span>
+              <div><div style="font-weight:600;color:var(--accent3)">✅ Resume Uploaded</div><div class="text-xs text-muted">${u.resumeFilename||'resume.pdf'}</div></div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-secondary" style="flex:1" onclick="document.getElementById('resume-input').click()">🔄 Replace Resume</button>
+            <button class="btn btn-primary" style="flex:1" onclick="viewResume('${u.id}')">👁️ View Resume</button>
+          </div>` :
+          `<div class="upload-zone" id="upload-zone" onclick="document.getElementById('resume-input').click()">
+            <div class="upload-icon">📤</div>
+            <div style="font-weight:600;margin-bottom:4px;">Click or drag to upload resume</div>
+            <div class="text-sm text-muted">PDF, DOC, DOCX up to 5MB</div>
+          </div>`}
+        <input type="file" id="resume-input" accept=".pdf,.doc,.docx" style="display:none" onchange="handleResumeUpload(event)" />
+        <div id="upload-status" class="success-msg mt-1"></div>
+      </div>
+      <div class="card">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:14px;">🔐 Change Password</div>
+        <div class="flex flex-col gap-2">
+          <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" type="password" id="cp-cur" placeholder="••••••••" /></div>
+          <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" id="cp-new" placeholder="Min 8 characters" /></div>
+          <div class="form-group"><label class="form-label">Confirm Password</label><input class="form-input" type="password" id="cp-confirm" placeholder="Repeat new password" /></div>
+          <button class="btn btn-primary" onclick="changePassword()">🔐 Update Password</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+//  NOTIFICATIONS
+// ══════════════════════════════════════════════
+function renderNotifications() {
+  const notifs = state.data.notifications.filter(n => n.userId === state.user.id).slice().reverse();
+  return `
+  <div class="page-header">
+    <div><div class="page-title">🔔 Notifications</div><div class="page-subtitle">${notifs.filter(n=>!n.read).length} unread</div></div>
+    ${notifs.length > 0 ? `<button class="btn btn-secondary btn-sm" onclick="markAllRead()">Mark all read</button>` : ''}
+  </div>
+  ${notifs.length === 0 ? `<div class="empty-state"><div class="empty-icon">🔔</div><div class="empty-title">No notifications yet</div><p class="text-muted text-sm">Activity notifications will appear here.</p></div>` :
+    notifs.map(n => `
+    <div class="notif-item ${n.read?'':'unread'}" onclick="markNotifRead('${n.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div><div style="font-size:13px;font-weight:${n.read?'400':'600'}">${n.message}</div><div class="text-xs text-muted" style="margin-top:4px;">${formatDate(n.createdAt)}</div></div>
+        ${!n.read?`<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px;"></div>`:''}
+      </div>
+    </div>
+  `).join('')}`;
+}
+
+// ══════════════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════════════
+function renderModal() {
+  if (!state.modal) return '';
+  const { type, data } = state.modal;
+  let content = '';
+  const wideTypes = ['viewApplicants','viewCandidate','scheduleInterview','addInterview'];
+
+  if (type === 'postJob') content = renderPostJobModal();
+  else if (type === 'viewJob') content = renderViewJobModal(data);
+  else if (type === 'viewJobCandidate') content = renderViewJobCandidateModal(data);
+  else if (type === 'applyJob') content = renderApplyJobModal(data);
+  else if (type === 'viewApplicants') content = renderViewApplicantsModal(data);
+  else if (type === 'viewCandidate') content = renderViewCandidateModal(data);
+  else if (type === 'scheduleInterview') content = renderScheduleInterviewModal(data);
+  else if (type === 'addInterview') content = renderAddInterviewModal();
+  else if (type === 'addFeedback') content = renderAddFeedbackModal(data);
+  else if (type === 'viewFeedback') content = renderViewFeedbackModal(data);
+  else if (type === 'addUser') content = renderAddUserModal();
+  else if (type === 'viewUser') content = renderViewUserModal(data);
+
+  return `
+  <div class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal ${wideTypes.includes(type)?'modal-wide':''}" onclick="event.stopPropagation()">
+      ${content}
+    </div>
+  </div>`;
+}
+
+function renderPostJobModal() {
+  return `
+  <div class="modal-header">
+    <div class="modal-title">💼 Post New Job</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div class="flex flex-col gap-2">
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Job Title *</label><input class="form-input" id="j-title" placeholder="e.g. Senior Developer" /></div>
+      <div class="form-group"><label class="form-label">Department *</label><input class="form-input" id="j-dept" placeholder="Engineering" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Location *</label><input class="form-input" id="j-loc" placeholder="Remote / City" /></div>
+      <div class="form-group"><label class="form-label">Job Type</label><select class="form-select" id="j-type"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option></select></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Salary Range</label><input class="form-input" id="j-salary" placeholder="₹10-15 LPA" /></div>
+      <div class="form-group"><label class="form-label">Experience Required</label><input class="form-input" id="j-exp" placeholder="3+ years" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Application Deadline</label><input class="form-input" id="j-deadline" type="date" /></div>
+      <div class="form-group"><label class="form-label">Company Name</label><input class="form-input" id="j-company" placeholder="Your company name" /></div>
+    </div>
+    <div class="form-group"><label class="form-label">Skills Required (comma separated)</label><input class="form-input" id="j-skills" placeholder="React, Node.js, Python" /></div>
+    <div class="form-group"><label class="form-label">Job Description *</label><textarea class="form-textarea" id="j-desc" placeholder="Describe the role, responsibilities and what you're looking for…"></textarea></div>
+    <div class="form-group"><label class="form-label">Requirements</label><textarea class="form-textarea" id="j-req" placeholder="Minimum qualifications, must-have skills…"></textarea></div>
+    <div class="error-msg" id="j-err"></div>
+    <button class="btn btn-primary" onclick="postJob()">🚀 Publish Job</button>
+  </div>`;
+}
+
+function renderViewJobModal(jobId) {
+  const j = getJob(jobId);
+  if (!j) return `<div class="card">❌ Job not found</div>`;
+  const apps = getApplicationsForJob(j.id);
+  return `
+  <div class="modal-header">
+    <div><div class="modal-title">${j.title}</div><div class="text-muted text-sm">${j.company||'TechCorp'} · ${j.department}</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div class="flex flex-col gap-2">
+    <div class="grid-2">
+      <div><div class="form-label">Location</div><div>📍 ${j.location}</div></div>
+      <div><div class="form-label">Type</div><div>${j.type}</div></div>
+      <div><div class="form-label">Salary</div><div style="color:var(--accent3);font-weight:600">${j.salary}</div></div>
+      <div><div class="form-label">Experience</div><div>${j.experience}</div></div>
+      <div><div class="form-label">Deadline</div><div>${formatDate(j.deadline)}</div></div>
+      <div><div class="form-label">Applicants</div><div><span class="badge badge-blue">${apps.length}</span></div></div>
+    </div>
+    <div class="divider"></div>
+    <div><div class="form-label">Description</div><div style="font-size:13px;line-height:1.7;margin-top:6px;">${j.description||'-'}</div></div>
+    <div><div class="form-label">Requirements</div><div style="font-size:13px;line-height:1.7;margin-top:6px;">${j.requirements||'-'}</div></div>
+    <div><div class="form-label">Skills</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${(j.skills||[]).map(s=>`<span class="badge badge-blue">${s}</span>`).join('')}</div></div>
+  </div>`;
+}
+
+function renderViewJobCandidateModal(jobId) {
+  const j = getJob(jobId);
+  if (!j) return '';
+  const applied = getApplicationsForCandidate(state.user.id).some(a => a.jobId === jobId);
+  return `
+  <div class="modal-header">
+    <div><div class="modal-title">${j.title}</div><div class="text-muted text-sm">${j.company||'TechCorp'} · ${j.location}</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div class="flex gap-2" style="flex-wrap:wrap;margin-bottom:16px;">
+    <span class="badge badge-blue">${j.type}</span>
+    <span class="badge badge-green">${j.status||'Active'}</span>
+    <span style="font-size:13px;font-weight:600;color:var(--accent3)">${j.salary}</span>
+    <span class="text-sm text-muted">⏱️ ${j.experience}</span>
+  </div>
+  <div style="margin-bottom:16px;"><div class="form-label">Description</div><div style="font-size:13px;line-height:1.8;margin-top:6px;">${j.description}</div></div>
+  <div style="margin-bottom:16px;"><div class="form-label">Requirements</div><div style="font-size:13px;line-height:1.8;margin-top:6px;">${j.requirements}</div></div>
+  <div style="margin-bottom:20px;"><div class="form-label">Required Skills</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${(j.skills||[]).map(s=>`<span class="badge badge-blue">${s}</span>`).join('')}</div></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="text-muted text-sm">Deadline: ${formatDate(j.deadline)}</div>
+    ${applied ? `<span class="badge badge-green" style="font-size:13px;padding:8px 16px;">✅ Already Applied</span>` : `<button class="btn btn-primary" onclick="closeModal();openModal('applyJob','${j.id}')">🚀 Apply Now</button>`}
+  </div>`;
+}
+
+function renderApplyJobModal(jobId) {
+  const j = getJob(jobId);
+  if (!j) return '';
+  const hasResume = !!state.user.resume;
+  
+  return `
+  <div class="modal-header">
+    <div class="modal-title">Apply for ${j.title}</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div style="padding:14px;background:var(--surface2);border-radius:10px;margin-bottom:20px;">
+    <div style="font-weight:600">${j.title}</div>
+    <div class="text-muted text-sm">${j.company || 'TechCorp'} · ${j.location} · ${j.salary}</div>
+  </div>
+  ${!hasResume ? `<div style="padding:12px;background:#2e2212;border:1px solid var(--warn);border-radius:9px;margin-bottom:16px;font-size:13px;color:var(--warn);">⚠️ No resume uploaded. <button class="btn btn-sm btn-ghost" onclick="closeModal();navigate('profile')" style="color:var(--warn);text-decoration:underline;">Upload your resume</button> for better AI matching.</div>` : `<div style="padding:12px;background:#0d2e28;border:1px solid var(--accent3);border-radius:9px;margin-bottom:16px;font-size:13px;color:var(--accent3);">✅ Resume on file: ${state.user.resumeFilename || 'resume.pdf'}</div>`}
+  <div class="form-group" style="margin-bottom:16px;">
+    <label class="form-label">Cover Letter (Optional)</label>
+    <textarea class="form-textarea" id="cover-letter" style="min-height:120px" placeholder="Tell them why you're the perfect fit for this role…"></textarea>
+  </div>
+  <div class="error-msg" id="apply-err"></div>
+  <button class="btn btn-primary w-full" onclick="applyForJob('${jobId}')">🚀 Submit Application</button>
+  `;
+}
+
+function renderViewApplicantsModal(jobId) {
+  const j = getJob(jobId);
+  const apps = getApplicationsForJob(jobId).sort((a,b)=>(b.resumeScore||0)-(a.resumeScore||0));
+  return `
+  <div class="modal-header">
+    <div><div class="modal-title">Applicants — ${j?.title||''}</div><div class="text-muted text-sm">${apps.length} total applications</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  ${apps.length === 0 ? `<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-title">No applications yet</div></div>` : `
+  <div class="flex flex-col gap-2">
+    ${apps.map((a, i) => {
+      const c = getUser(a.candidateId);
+      if (!c) return '';
+      return `<div class="card card-sm">
+        <div class="flex items-center gap-2">
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--muted);min-width:24px;">#${i+1}</div>
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;">${(c.name||'U')[0].toUpperCase()}</div>
+          <div style="flex:1;">
+            <div style="font-weight:600">${c.name}</div>
+            <div class="text-xs text-muted">${c.email} · ${c.experience||'N/A'} exp</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:${scoreColor(a.resumeScore||60)}">${a.resumeScore||60}%</div>
+            <div class="text-xs text-muted">AI Score</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin:10px 0;">
+          ${(c.skills||'').split(',').filter(Boolean).slice(0,4).map(s=>`<span class="badge badge-blue">${s.trim()}</span>`).join('')}
+        </div>
+        <div class="flex gap-1">
+          <span class="badge ${statusColor(a.status)}">${a.status}</span>
+          ${a.shortlisted?'<span class="badge badge-purple">⭐ Shortlisted</span>':''}
+          <div style="margin-left:auto;display:flex;gap:6px;">
+            <button class="btn btn-sm btn-secondary" onclick="openModal('viewCandidate','${c.id}')">👁️ Profile</button>
+            ${c.resume?`<button class="btn btn-sm btn-secondary" onclick="viewResume('${c.id}')">📄 Resume</button>`:''}
+            ${!a.shortlisted?`<button class="btn btn-sm btn-purple" onclick="shortlistCandidate('${a.id}')">⭐ Shortlist</button>`:''}
+            ${a.shortlisted&&a.status!=='Interview'?`<button class="btn btn-sm btn-success" onclick="openModal('scheduleInterview','${a.id}')">🗓️ Interview</button>`:''}
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`}`;
+}
+
+function renderViewCandidateModal(candidateId) {
+  const c = getUser(candidateId);
+  if (!c) return '<div>Candidate not found</div>';
+  const apps = getApplicationsForCandidate(candidateId);
+  const interviews = state.data.interviews.filter(i => i.candidateId === candidateId);
+  return `
+  <div class="modal-header">
+    <div>
+      <div class="modal-title">${c.name}</div>
+      <div class="text-muted text-sm">${c.email}</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;margin:0 auto 10px;">${(c.name||'U')[0].toUpperCase()}</div>
+    <div style="font-weight:700;font-size:18px;">${c.name}</div>
+    <div class="text-muted text-sm">${c.email}</div>
+  </div>
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div style="padding:12px;background:var(--surface2);border-radius:9px;"><div class="form-label">Phone</div><div>📞 ${c.phone||'N/A'}</div></div>
+    <div style="padding:12px;background:var(--surface2);border-radius:9px;"><div class="form-label">Experience</div><div>💼 ${c.experience||'N/A'}</div></div>
+  </div>
+  ${c.skills?`<div style="margin-bottom:16px;"><div class="form-label" style="margin-bottom:8px;">Skills</div><div style="display:flex;flex-wrap:wrap;gap:6px;">${c.skills.split(',').filter(Boolean).map(s=>`<span class="badge badge-blue">${s.trim()}</span>`).join('')}</div></div>`:''}
+  <div class="flex gap-2" style="margin-bottom:16px;">
+    ${c.resume?`<button class="btn btn-primary" style="flex:1" onclick="viewResume('${c.id}')">📄 View Resume</button>`:'<div style="padding:10px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--muted);flex:1;text-align:center;">No resume uploaded</div>'}
+  </div>
+  <div><div class="form-label" style="margin-bottom:10px;">Applications (${apps.length})</div>
+    ${apps.map(a => {
+      const j = getJob(a.jobId);
+      return j ? `<div style="padding:8px;background:var(--surface2);border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+        <div><div style="font-size:13px;font-weight:600">${j.title}</div><div class="text-xs text-muted">${formatDate(a.appliedAt)}</div></div>
+        <span class="badge ${statusColor(a.status)}">${a.status}</span>
+      </div>` : '';
+    }).join('')}
+  </div>`;
+}
+
+function renderScheduleInterviewModal(appId) {
+  const app = state.data.applications.find(a => a.id === appId);
+  if (!app) return '<div>Application not found</div>';
+  const c = getUser(app.candidateId);
+  const j = getJob(app.jobId);
+  const today = new Date().toISOString().slice(0,16);
+  return `
+  <div class="modal-header">
+    <div class="modal-title">🗓️ Schedule Interview</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div style="padding:14px;background:var(--surface2);border-radius:10px;margin-bottom:20px;">
+    <div style="font-weight:600">${c?.name||'Unknown'}</div>
+    <div class="text-muted text-sm">${j?.title||'Unknown Job'}</div>
+  </div>
+  <div class="flex flex-col gap-2">
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Interview Type</label><select class="form-select" id="int-type"><option>Technical</option><option>HR</option><option>Managerial</option><option>Cultural Fit</option><option>Final Round</option></select></div>
+      <div class="form-group"><label class="form-label">Duration (minutes)</label><select class="form-select" id="int-dur"><option>30</option><option selected>60</option><option>90</option><option>120</option></select></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Scheduled Date & Time</label><input class="form-input" type="datetime-local" id="int-date" min="${today}" /></div>
+      <div class="form-group"><label class="form-label">Interviewer Name</label><input class="form-input" id="int-interviewer" value="${state.user.name}" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Location / Platform</label><select class="form-select" id="int-loc"><option>Google Meet</option><option>Zoom</option><option>Microsoft Teams</option><option>In-Person</option><option>Phone Call</option></select></div>
+      <div class="form-group"><label class="form-label">Meeting Link (optional)</label><input class="form-input" id="int-link" placeholder="https://meet.google.com/..." /></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes for Candidate</label><textarea class="form-textarea" id="int-notes" placeholder="Any preparation notes or topics to cover…"></textarea></div>
+    <div class="error-msg" id="int-err"></div>
+    <button class="btn btn-primary" onclick="scheduleInterview('${appId}')">🗓️ Schedule Interview</button>
+  </div>`;
+}
+
+function renderAddInterviewModal() {
+  const eligible = state.data.applications.filter(a => a.shortlisted && a.status !== 'Interview');
+  return `
+  <div class="modal-header">
+    <div class="modal-title">🗓️ Schedule New Interview</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div class="flex flex-col gap-2">
+    <div class="form-group">
+      <label class="form-label">Select Candidate *</label>
+      <select class="form-select" id="int-app">
+        <option value="">— Choose shortlisted candidate —</option>
+        ${eligible.map(a => {
+          const c = getUser(a.candidateId);
+          const j = getJob(a.jobId);
+          return `<option value="${a.id}">${c?.name||'Unknown'} — ${j?.title||'Unknown Job'}</option>`;
+        }).join('')}
+      </select>
+    </div>
+    ${eligible.length === 0 ? `<div style="padding:12px;background:var(--surface2);border-radius:9px;font-size:13px;color:var(--muted);">⚠️ No shortlisted candidates yet. Shortlist candidates from the Applications tab first.</div>` : ''}
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Interview Type</label><select class="form-select" id="int-type"><option>Technical</option><option>HR</option><option>Managerial</option><option>Final Round</option></select></div>
+      <div class="form-group"><label class="form-label">Duration</label><select class="form-select" id="int-dur"><option>30</option><option selected>60</option><option>90</option></select></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Date & Time</label><input class="form-input" type="datetime-local" id="int-date" /></div>
+      <div class="form-group"><label class="form-label">Interviewer</label><input class="form-input" id="int-interviewer" value="${state.user.name}" /></div>
+    </div>
+    <div class="form-group"><label class="form-label">Platform</label><select class="form-select" id="int-loc"><option>Google Meet</option><option>Zoom</option><option>Microsoft Teams</option><option>In-Person</option></select></div>
+    <div class="form-group"><label class="form-label">Meeting Link</label><input class="form-input" id="int-link" placeholder="https://meet.google.com/..." /></div>
+    <div class="error-msg" id="int-err"></div>
+    <button class="btn btn-primary" onclick="scheduleInterviewFromModal()" ${eligible.length===0?'disabled':''}>🗓️ Schedule Interview</button>
+  </div>`;
+}
+
+function renderAddFeedbackModal(interviewId) {
+  const intv = state.data.interviews.find(i => i.id === interviewId);
+  const c = intv ? getUser(intv.candidateId) : null;
+  const j = intv ? getJob(intv.jobId) : null;
+  return `
+  <div class="modal-header">
+    <div class="modal-title">💬 Interview Feedback</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div style="padding:14px;background:var(--surface2);border-radius:10px;margin-bottom:20px;">
+    <div style="font-weight:600">${c?.name||'Unknown'}</div>
+    <div class="text-muted text-sm">${j?.title||'Unknown Job'} · ${intv?.type||'Interview'}</div>
+  </div>
+  <div class="flex flex-col gap-2">
+    <div class="form-group">
+      <label class="form-label">Overall Rating</label>
+      <select class="form-select" id="fb-rating">
+        <option value="1">⭐ 1 — Poor</option>
+        <option value="2">⭐⭐ 2 — Below Average</option>
+        <option value="3" selected>⭐⭐⭐ 3 — Average</option>
+        <option value="4">⭐⭐⭐⭐ 4 — Good</option>
+        <option value="5">⭐⭐⭐⭐⭐ 5 — Excellent</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Recommendation</label>
+      <select class="form-select" id="fb-rec">
+        <option value="Selected">✅ Select — Move to Offer</option>
+        <option value="Interview">🔄 Another Round</option>
+        <option value="Rejected">❌ Reject</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Detailed Notes</label>
+      <textarea class="form-textarea" id="fb-notes" style="min-height:120px" placeholder="Technical skills assessment, communication, cultural fit, areas of improvement…"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="submitFeedback('${interviewId}')">✅ Submit Feedback</button>
+  </div>`;
+}
+
+function renderViewFeedbackModal(interviewId) {
+  const intv = state.data.interviews.find(i => i.id === interviewId);
+  if (!intv) return '';
+  const c = getUser(intv.candidateId);
+  const j = getJob(intv.jobId);
+  const stars = '⭐'.repeat(intv.rating||0) + '☆'.repeat(5-(intv.rating||0));
+  return `
+  <div class="modal-header">
+    <div class="modal-title">📋 Interview Feedback</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div style="padding:14px;background:var(--surface2);border-radius:10px;margin-bottom:20px;">
+    <div style="font-weight:600">${c?.name||'Unknown'}</div>
+    <div class="text-muted text-sm">${j?.title||'Unknown Job'} · ${intv.type||'Interview'}</div>
+  </div>
+  <div style="text-align:center;padding:20px;background:var(--surface2);border-radius:10px;margin-bottom:16px;">
+    <div style="font-size:28px;margin-bottom:4px;">${stars}</div>
+    <div style="font-family:var(--font-head);font-size:24px;font-weight:800;">${intv.rating||0}/5</div>
+    <div class="text-muted text-sm">Overall Rating</div>
+  </div>
+  <div style="margin-bottom:12px;"><div class="form-label">Recommendation</div><div style="margin-top:6px;"><span class="badge ${intv.recommendation==='Selected'?'badge-green':intv.recommendation==='Rejected'?'badge-red':'badge-warn'}">${intv.recommendation||'Pending'}</span></div></div>
+  <div><div class="form-label">Notes</div><div style="margin-top:8px;padding:12px;background:var(--surface2);border-radius:9px;font-size:13px;line-height:1.7;">${intv.feedback||'No detailed notes.'}</div></div>`;
+}
+
+function renderAddUserModal() {
+  return `
+  <div class="modal-header">
+    <div class="modal-title">👤 Add New User</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div class="flex flex-col gap-2">
+    <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" id="au-name" placeholder="Full name" /></div>
+    <div class="form-group"><label class="form-label">Email *</label><input class="form-input" id="au-email" type="email" placeholder="email@company.com" /></div>
+    <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="au-phone" placeholder="10-digit phone" /></div>
+    <div class="form-group"><label class="form-label">Role *</label><select class="form-select" id="au-role"><option value="recruiter">Recruiter</option><option value="candidate">Candidate</option><option value="admin">Admin</option></select></div>
+    <div class="form-group"><label class="form-label">Password *</label><input class="form-input" id="au-pass" type="password" placeholder="Min 8 chars" /></div>
+    <div class="error-msg" id="au-err"></div>
+    <button class="btn btn-primary" onclick="addUser()">➕ Create User</button>
+  </div>`;
+}
+
+function renderViewUserModal(userId) {
+  const u = getUser(userId);
+  if (!u) return '<div>User not found</div>';
+  const apps = getApplicationsForCandidate(u.id);
+  return `
+  <div class="modal-header">
+    <div class="modal-title">👤 User Profile</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;margin:0 auto 10px;">${(u.name||'U')[0].toUpperCase()}</div>
+    <div style="font-weight:700;font-size:18px;">${u.name}</div>
+    <div class="text-muted text-sm">${u.email}</div>
+    <div class="flex gap-2 justify-center mt-1"><span class="badge ${u.role==='admin'?'badge-red':u.role==='recruiter'?'badge-purple':'badge-blue'}">${u.role}</span><span class="badge ${u.active?'badge-green':'badge-gray'}">${u.active?'Active':'Inactive'}</span></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div style="padding:12px;background:var(--surface2);border-radius:9px;"><div class="form-label">Phone</div><div>${u.phone||'N/A'}</div></div>
+    <div style="padding:12px;background:var(--surface2);border-radius:9px;"><div class="form-label">Joined</div><div>${formatDate(u.createdAt)}</div></div>
+  </div>
+  ${u.role === 'candidate' ? `
+    <div><div class="form-label" style="margin-bottom:8px;">Applications (${apps.length})</div>
+      ${apps.slice(0,3).map(a=>{ const j=getJob(a.jobId); return j?`<div style="padding:8px;background:var(--surface2);border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;"><span style="font-size:13px;">${j.title}</span><span class="badge ${statusColor(a.status)}">${a.status}</span></div>`:''; }).join('')}
+    </div>` : ''}
+  <div class="flex gap-2 mt-2">
+    <button class="btn btn-sm ${u.active?'btn-danger':'btn-success'}" style="flex:1" onclick="toggleUserStatus('${u.id}');closeModal()">${u.active?'Disable Account':'Enable Account'}</button>
+    <button class="btn btn-sm btn-danger" style="flex:1" onclick="deleteUser('${u.id}')">🗑️ Delete User</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+//  ACTION FUNCTIONS
+// ══════════════════════════════════════════════
+function postJob() {
+  const title = document.getElementById('j-title')?.value.trim();
+  const dept = document.getElementById('j-dept')?.value.trim();
+  const loc = document.getElementById('j-loc')?.value.trim();
+  const type = document.getElementById('j-type')?.value;
+  const salary = document.getElementById('j-salary')?.value.trim();
+  const exp = document.getElementById('j-exp')?.value.trim();
+  const skills = document.getElementById('j-skills')?.value.trim();
+  const desc = document.getElementById('j-desc')?.value.trim();
+  const req = document.getElementById('j-req')?.value.trim();
+  const deadline = document.getElementById('j-deadline')?.value;
+  const company = document.getElementById('j-company')?.value.trim();
+  const errEl = document.getElementById('j-err');
+  errEl.textContent = '';
+
+  if (!title || !dept || !loc || !desc) { errEl.textContent = '⚠️ Please fill all required fields (Title, Department, Location, Description).'; return; }
+
+  const job = {
+    id: genId('job'), title, department: dept, location: loc, type,
+    salary: salary || 'Negotiable', experience: exp || 'Any',
+    skills: skills ? skills.split(',').map(s=>s.trim()).filter(Boolean) : [],
+    description: desc, requirements: req || '', status: 'Active',
+    postedBy: state.user.id, postedAt: new Date().toISOString().slice(0,10),
+    deadline: deadline || '', company: company || 'TalentBridge'
+  };
+
+  state.data.jobs.push(job);
+  saveData();
+  state.modal = null;
+  showToast(`Job "${title}" published successfully!`, 'success');
+  navigate('jobs');
+}
+
+function closeJob(jobId) {
+  const j = state.data.jobs.find(j => j.id === jobId);
+  if (j) { j.status = 'Closed'; saveData(); showToast('Job closed.', 'info'); render(); }
+}
+
+function applyForJob(jobId) {
+  const already = state.data.applications.find(a => a.candidateId === state.user.id && a.jobId === jobId);
+  if (already) { 
+    showToast("You've already applied for this job!", "info"); 
+    closeModal();
+    return; 
+  }
+
+  // Get the cover letter from the modal if it exists
+  const coverLetter = document.getElementById('cover-letter')?.value.trim() || '';
+  
+  const score = scoreResume(state.user.id, jobId);
+  const app = {
+    id: genId('app'),
+    candidateId: state.user.id,
+    jobId: jobId,
+    status: 'Applied',
+    appliedAt: new Date().toISOString().slice(0,10),
+    resumeScore: score,
+    shortlisted: false,
+    coverLetter: coverLetter
+  };
+
+  state.data.applications.push(app);
+  const j = getJob(jobId);
+
+  state.data.notifications.push({
+    id: genId('notif'), 
+    userId: state.user.id, 
+    type: 'apply',
+    message: `✅ Application submitted for "${j?.title || 'job'}". We'll keep you updated!`,
+    read: false, 
+    createdAt: new Date().toISOString().slice(0,10)
+  });
+
+  saveData();
+  showToast("Application submitted! 🎉", "success");
+  closeModal();
+  render();
+}
+function shortlistCandidate(appId) {
+  const app = state.data.applications.find(a => a.id === appId);
+  if (!app) return;
+
+  app.shortlisted = true;
+  if (app.status === 'Applied') app.status = 'Shortlisted';
+
+  const c = getUser(app.candidateId);
+  const j = getJob(app.jobId);
+
+  state.data.notifications.push({
+    id: genId('notif'), userId: app.candidateId, type: 'shortlist',
+    message: `🎉 Congratulations! You were shortlisted for "${j?.title||'a job'}"! An interview may be scheduled soon.`,
+    read: false, createdAt: new Date().toISOString().slice(0,10)
+  });
+
+  saveData();
+  showToast(`${c?.name||'Candidate'} shortlisted! ⭐`, 'success');
+  render();
+}
+
+function updateAppStatus(appId, status) {
+  if (!status) return;
+  const app = state.data.applications.find(a => a.id === appId);
+  if (!app) return;
+
+  const oldStatus = app.status;
+  app.status = status;
+  const j = getJob(app.jobId);
+
+  state.data.notifications.push({
+    id: genId('notif'), userId: app.candidateId, type: 'status',
+    message: `📢 Your application for "${j?.title||'a job'}" status updated: ${status}`,
+    read: false, createdAt: new Date().toISOString().slice(0,10)
+  });
+
+  saveData();
+  showToast(`Status updated to ${status}`, 'success');
+  render();
+}
+
+function scheduleInterview(appId) {
+  const app = state.data.applications.find(a => a.id === appId);
+  if (!app) return;
+
+  if (!app.shortlisted) { showToast("Please shortlist this candidate first.", "error"); return; }
+
+  const intType = document.getElementById('int-type')?.value || 'Technical';
+  const duration = parseInt(document.getElementById('int-dur')?.value || '60');
+  const dateVal = document.getElementById('int-date')?.value;
+  const interviewer = document.getElementById('int-interviewer')?.value || state.user.name;
+  const location = document.getElementById('int-loc')?.value || 'Google Meet';
+  const meetLink = document.getElementById('int-link')?.value || '';
+  const notes = document.getElementById('int-notes')?.value || '';
+
+  if (!dateVal) { document.getElementById('int-err').textContent = '⚠️ Please select interview date and time.'; return; }
+
+  const interview = {
+    id: genId('intv'),
+    applicationId: app.id,
+    candidateId: app.candidateId,
+    jobId: app.jobId,
+    type: intType, duration, interviewer, location, meetLink, notes,
+    scheduledAt: dateVal.split('T')[0],
+    scheduledTime: dateVal.split('T')[1] || '',
+    status: 'Scheduled',
+    feedback: null, rating: null, recommendation: null
+  };
+
+  state.data.interviews.push(interview);
+  app.status = 'Interview';
+
+  const c = getUser(app.candidateId);
+  const j = getJob(app.jobId);
+
+  state.data.notifications.push({
+    id: genId('notif'), userId: app.candidateId, type: 'interview',
+    message: `📅 Interview scheduled for "${j?.title||'a job'}" on ${formatDate(dateVal.split('T')[0])} — ${intType} round (${duration} min) via ${location}`,
+    read: false, createdAt: new Date().toISOString().slice(0,10)
+  });
+
+  saveData();
+  state.modal = null;
+  showToast(`Interview scheduled for ${c?.name}! 🗓️`, 'success');
+  render();
+}
+
+function scheduleInterviewFromModal() {
+  const appId = document.getElementById('int-app')?.value;
+  if (!appId) { document.getElementById('int-err').textContent = '⚠️ Please select a candidate.'; return; }
+
+  const app = state.data.applications.find(a => a.id === appId);
+  if (!app) return;
+
+  const intType = document.getElementById('int-type')?.value || 'Technical';
+  const duration = parseInt(document.getElementById('int-dur')?.value || '60');
+  const dateVal = document.getElementById('int-date')?.value;
+  const interviewer = document.getElementById('int-interviewer')?.value || state.user.name;
+  const location = document.getElementById('int-loc')?.value || 'Google Meet';
+  const meetLink = document.getElementById('int-link')?.value || '';
+
+  if (!dateVal) { document.getElementById('int-err').textContent = '⚠️ Please select date and time.'; return; }
+
+  const interview = {
+    id: genId('intv'),
+    applicationId: app.id,
+    candidateId: app.candidateId,
+    jobId: app.jobId,
+    type: intType, duration, interviewer, location, meetLink,
+    scheduledAt: dateVal.split('T')[0],
+    scheduledTime: dateVal.split('T')[1] || '',
+    status: 'Scheduled',
+    feedback: null, rating: null, recommendation: null
+  };
+
+  state.data.interviews.push(interview);
+  app.status = 'Interview';
+
+  const c = getUser(app.candidateId);
+  const j = getJob(app.jobId);
+
+  state.data.notifications.push({
+    id: genId('notif'), userId: app.candidateId, type: 'interview',
+    message: `📅 Interview scheduled for "${j?.title||'a job'}" — ${intType} round on ${formatDate(dateVal.split('T')[0])}`,
+    read: false, createdAt: new Date().toISOString().slice(0,10)
+  });
+
+  saveData();
+  state.modal = null;
+  showToast(`Interview scheduled for ${c?.name}!`, 'success');
+  navigate('interviews');
+}
+
+function completeInterview(id) {
+  const intv = state.data.interviews.find(i => i.id === id);
+  if (!intv) return;
+  intv.status = 'Completed';
+  saveData();
+  showToast('Interview marked as completed.', 'success');
+  render();
+}
+
+function submitFeedback(id) {
+  const intv = state.data.interviews.find(i => i.id === id);
+  if (!intv) return;
+
+  const rating = parseInt(document.getElementById('fb-rating')?.value) || 3;
+  const notes = document.getElementById('fb-notes')?.value.trim();
+  const rec = document.getElementById('fb-rec')?.value;
+
+  intv.feedback = notes;
+  intv.rating = rating;
+  intv.recommendation = rec;
+
+  const app = state.data.applications.find(a => a.id === intv.applicationId);
+  if (app) {
+    app.status = rec;
+    const j = getJob(app.jobId);
+    state.data.notifications.push({
+      id: genId('notif'), userId: app.candidateId, type: 'feedback',
+      message: `📋 Interview feedback received for "${j?.title||'job'}" — ${rec} (${rating}/5 ⭐). ${rec==='Selected'?'🎉 Congratulations! You have been selected!':rec==='Rejected'?'We appreciate your time and effort.':'Another round may be scheduled.'}`,
+      read: false, createdAt: new Date().toISOString().slice(0,10)
+    });
+  }
+
+  saveData();
+  state.modal = null;
+  showToast('Feedback submitted!', 'success');
+  navigate('interviews');
+}
+
+function saveProfile() {
+  state.user.name = document.getElementById('p-name')?.value.trim() || state.user.name;
+  state.user.email = document.getElementById('p-email')?.value.trim() || state.user.email;
+  state.user.phone = document.getElementById('p-phone')?.value.trim() || state.user.phone;
+  const exp = document.getElementById('p-exp');
+  const skills = document.getElementById('p-skills');
+  if (exp) state.user.experience = exp.value.trim();
+  if (skills) state.user.skills = skills.value.trim();
+
+  const idx = state.data.users.findIndex(u => u.id === state.user.id);
+  if (idx !== -1) state.data.users[idx] = { ...state.data.users[idx], ...state.user };
+  saveData();
+  showToast('Profile saved successfully!', 'success');
+  render();
+}
+
+function changePassword() {
+  const cur = document.getElementById('cp-cur')?.value;
+  const nw = document.getElementById('cp-new')?.value;
+  const confirm = document.getElementById('cp-confirm')?.value;
+  if (!cur || !nw) { showToast('Please fill all password fields.', 'error'); return; }
+  if (cur !== state.user.password) { showToast('Current password is incorrect.', 'error'); return; }
+  if (nw.length < 8) { showToast('New password must be at least 8 characters.', 'error'); return; }
+  if (confirm && nw !== confirm) { showToast('Passwords do not match.', 'error'); return; }
+
+  state.user.password = nw;
+  const idx = state.data.users.findIndex(u => u.id === state.user.id);
+  if (idx !== -1) state.data.users[idx].password = nw;
+  saveData();
+  showToast('Password changed successfully!', 'success');
+}
+
+function handleResumeUpload(e) {
+  const file = e.target.files[0];
+  if (file) processResumeFile(file);
+}
+
+function processResumeFile(file) {
+  const allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  if (!allowed.includes(file.type) && !file.name.match(/\.(pdf|doc|docx)$/i)) {
+    showToast('Only PDF, DOC, DOCX files are allowed.', 'error'); 
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('File must be under 5MB.', 'error'); return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    state.user.resume = reader.result;
+    state.user.resumeFilename = file.name;
+    const idx = state.data.users.findIndex(u => u.id === state.user.id);
+    if (idx !== -1) { state.data.users[idx].resume = reader.result; state.data.users[idx].resumeFilename = file.name; }
+    saveData();
+    showToast(`Resume "${file.name}" uploaded! ✅`, 'success');
+    render();
+  };
+  reader.readAsDataURL(file);
+}
+
+function viewResume(candidateId) {
+  const user = state.data.users.find(u => u.id === candidateId);
+  if (!user || !user.resume) { showToast("No resume found for this candidate.", "error"); return; }
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>${user.resumeFilename||'Resume'}</title></head><body style="margin:0;padding:0"><iframe src="${user.resume}" style="width:100%;height:100vh;border:none;"></iframe></body></html>`);
+}
+
+function addUser() {
+  const name = document.getElementById('au-name')?.value.trim();
+  const email = document.getElementById('au-email')?.value.trim().toLowerCase();
+  const phone = document.getElementById('au-phone')?.value.trim();
+  const role = document.getElementById('au-role')?.value;
+  const pass = document.getElementById('au-pass')?.value;
+  const errEl = document.getElementById('au-err');
+  errEl.textContent = '';
+
+  if (!name || !email || !pass) { errEl.textContent = '⚠️ Please fill all required fields.'; return; }
+  if (pass.length < 8) { errEl.textContent = '⚠️ Password must be at least 8 characters.'; return; }
+  if (state.data.users.find(u => u.email.toLowerCase() === email)) { errEl.textContent = '❌ Email already registered.'; return; }
+
+  const newUser = {
+    id: genId('user'), name, email, password: pass, phone: phone||'', role,
+    createdAt: new Date().toISOString().slice(0,10), active: true,
+    skills: '', experience: '', resume: null, resumeFilename: ''
+  };
+  state.data.users.push(newUser);
+  saveData();
+  state.modal = null;
+  showToast(`User "${name}" created successfully!`, 'success');
+  navigate('users');
+}
+
+function deleteUser(userId) {
+  if (!confirm('Are you sure you want to delete this user?')) return;
+  state.data.users = state.data.users.filter(u => u.id !== userId);
+  saveData();
+  showToast('User deleted.', 'info');
+  render();
+}
+
+function toggleUserStatus(userId) {
+  const u = state.data.users.find(u => u.id === userId);
+  if (!u) {return;}
+  u.active = !u.active;
+  saveData();
+  showToast(`User ${u.active?'enabled':'disabled'}.`, u.active?'success':'info');
+  render();
+}
+
+function markNotifRead(id) {
+  const n = state.data.notifications.find(n => n.id === id);
+  if (n) { n.read = true; saveData(); render(); }
+}
+
+function markAllRead() {
+  state.data.notifications.filter(n => n.userId === state.user.id).forEach(n => n.read = true);
+  saveData();
+  showToast('All notifications marked as read.', 'success');
+  render();
+}
+
+// ══════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════
+if (state.user) {
+  state.page = 'dashboard';
+}
+render();
+</script>
+</body>
+</html>
